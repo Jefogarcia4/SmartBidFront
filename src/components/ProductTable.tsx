@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Package, PackageOpen, Puzzle, Eye, X } from 'lucide-react';
 import type { ProductDto } from '../types/api';
 import { useCart } from '../context/CartContext';
+import { useSettings } from '../context/SettingsContext';
 import { Stepper } from './Stepper';
 import { Pagination, usePagination } from './Pagination';
 import { money } from '../utils/format';
@@ -36,6 +37,7 @@ interface ProductTableProps {
 
 export function ProductTable({ products, loading, hasSelection }: ProductTableProps) {
   const { getQuantity, setBaseQuantity } = useCart();
+  const { useTrmPricing } = useSettings();
   const [descProduct, setDescProduct] = useState<ProductDto | null>(null);
   const pager = usePagination(products, 8);
 
@@ -124,7 +126,9 @@ export function ProductTable({ products, loading, hasSelection }: ProductTablePr
                 <td className="cell-cost">
                   <div className="cost-total">{money(p.priceCOP * Math.max(qty, 0))}</div>
                   <div className="cost-unit">
-                    USD {money(p.priceUSD)} · COP {money(p.priceCOP)} c/u
+                    {useTrmPricing
+                      ? `USD ${money(p.priceUSD)} · COP ${money(p.priceCOP)} c/u`
+                      : `${money(p.priceCOP)} c/u`}
                   </div>
                 </td>
               </tr>

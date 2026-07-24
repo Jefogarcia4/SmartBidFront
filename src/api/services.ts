@@ -16,6 +16,7 @@ import type {
   CreateSubcategoryDto,
   CurrentUser,
   ExchangeRateDto,
+  PricingSettingsDto,
   ProductDto,
   QuotationDto,
   SubcategoryDto,
@@ -116,6 +117,12 @@ export const clientsApi = {
     http.post<ContactDto>(`/api/clients/${clientId}/contacts`, dto),
 };
 
+export const settingsApi = {
+  getPricing: () => http.get<PricingSettingsDto>('/api/settings/pricing'),
+  setPricing: (dto: PricingSettingsDto) =>
+    http.put<PricingSettingsDto>('/api/settings/pricing', dto),
+};
+
 export const exchangeRatesApi = {
   list: () => http.get<ExchangeRateDto[]>('/api/exchangerates'),
   current: () => http.get<ExchangeRateDto>('/api/exchangerates/current'),
@@ -144,4 +151,6 @@ export const quotationsApi = {
   },
   changeStatus: (id: number, dto: ChangeStatusDto) =>
     http.put<QuotationDto>(`/api/quotations/${id}/status`, dto),
+  /** Documento Word de la cotización (textos redactados con FlexGPT en el backend). */
+  generateDocument: (id: number) => http.blob(`/api/quotations/${id}/document`),
 };

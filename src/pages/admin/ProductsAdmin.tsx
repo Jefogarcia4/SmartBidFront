@@ -4,6 +4,7 @@ import { Plus, Pencil, Ban, Puzzle, X, Link2 } from 'lucide-react';
 import { catalogApi } from '../../api/services';
 import type { CategoryDto, ProductDto, SubcategoryDto } from '../../types/api';
 import { Pagination, usePagination } from '../../components/Pagination';
+import { useSettings } from '../../context/SettingsContext';
 import { money } from '../../utils/format';
 
 interface Props {
@@ -16,7 +17,8 @@ interface ProductForm {
   name: string;
   scope: string;
   subcategoryId: number | '';
-  priceUSD: string;
+  /** Interpretado según el modo: COP directo (defecto) o USD (TRM habilitada) */
+  price: string;
   isAddOn: boolean;
   maxQuantity: string;
   isActive: boolean;
@@ -28,13 +30,14 @@ const EMPTY_FORM: ProductForm = {
   name: '',
   scope: '',
   subcategoryId: '',
-  priceUSD: '',
+  price: '',
   isAddOn: false,
   maxQuantity: '',
   isActive: true,
 };
 
 export function ProductsAdmin({ notify }: Props) {
+  const { useTrmPricing } = useSettings();
   const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [subcategories, setSubcategories] = useState<SubcategoryDto[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
@@ -106,8 +109,11 @@ export function ProductsAdmin({ notify }: Props) {
         name: form.name,
         scope: form.scope || null,
         subcategoryId: Number(form.subcategoryId),
-        priceUSD: Number(form.priceUSD),
         maxQuantity: form.maxQuantity === '' ? null : Number(form.maxQuantity),
+        // El modo de precios decide qué campo viaja al API
+        ...(useTrmPricing
+          ? { priceUSD: Number(form.price) }
+          : { priceCOP: Number(form.price) }),
       };
       if (form.id == null) {
         await catalogApi.createProduct({ ...base, code: form.code, isAddOn: form.isAddOn });
@@ -218,8 +224,8 @@ export function ProductsAdmin({ notify }: Props) {
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Ubicación</th>
-                <th style={{ textAlign: 'right' }}>Precio USD</th>
-                <th style={{ textAlign: 'right' }}>Precio COP (TRM)</th>
+                <th style={{ textAlign: 'right' }}>{useTrmPricing ? 'Precio USD' : 'Precio COP'}</th>
+                {useTrmPricing && <th style={{ textAlign: 'right' }}>Precio COP (TRM)</th>}
                 <th>Estado</th>
                 <th />
               </tr>
@@ -238,11 +244,15 @@ export function ProductsAdmin({ notify }: Props) {
                     {p.categoryName} › {p.subcategoryName}
                   </td>
                   <td className="cell-cost">
-                    <span className="cost-total">{money(p.priceUSD)}</span>
+                    <span className="cost-total">
+                      {money(useTrmPricing ? p.priceUSD : p.priceCOP)}
+                    </span>
                   </td>
-                  <td className="cell-cost">
-                    <span className="cost-unit">{money(p.priceCOP)}</span>
-                  </td>
+                  {useTrmPricing && (
+                    <td className="cell-cost">
+                      <span className="cost-unit">{money(p.priceCOP)}</span>
+                    </td>
+                  )}
                   <td>
                     <span className={`status-pill ${p.isActive ? 'on' : 'off'}`}>
                       {p.isActive ? 'Activo' : 'Inactivo'}
@@ -260,7 +270,7 @@ export function ProductsAdmin({ notify }: Props) {
                             name: p.name,
                             scope: p.scope ?? '',
                             subcategoryId: p.subcategoryId,
-                            priceUSD: String(p.priceUSD),
+                            price: String(useTrmPricing ? p.priceUSD : p.priceCOP),
                             isAddOn: p.isAddOn,
                             maxQuantity: p.maxQuantity == null ? '' : String(p.maxQuantity),
                             isActive: p.isActive,
@@ -353,14 +363,14 @@ export function ProductsAdmin({ notify }: Props) {
                 </div>
                 <div className="form-row">
                   <div className="field">
-                    <label>PRECIO BASE (USD)</label>
+                    <label>{useTrmPricing ? 'PRECIO BASE (USD)' : 'PRECIO (COP)'}</label>
                     <input
                       type="number"
                       required
                       min="0"
                       step="0.01"
-                      value={form.priceUSD}
-                      onChange={(e) => setForm({ ...form, priceUSD: e.target.value })}
+                      value={form.price}
+                      onChange={(e) => setForm({ ...form, price: e.target.value })}
                     />
                   </div>
                   <div className="field">

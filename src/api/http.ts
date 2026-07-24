@@ -47,8 +47,19 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** Descarga binaria (ej. documentos Word) con el mismo esquema de autenticación. */
+async function requestBlob(path: string): Promise<Blob> {
+  const headers = new Headers();
+  const token = tokenStore.get();
+  if (token) headers.set('Authorization', token);
+  const res = await fetch(`${BASE_URL}${path}`, { headers });
+  if (!res.ok) throw new ApiError(res.status, `Error ${res.status} descargando el archivo`);
+  return res.blob();
+}
+
 export const http = {
   get: <T>(path: string) => request<T>(path),
+  blob: (path: string) => requestBlob(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'POST', body: body != null ? JSON.stringify(body) : undefined }),
   put: <T>(path: string, body?: unknown) =>

@@ -171,23 +171,32 @@ export interface UpdateSubcategoryDto {
   isActive: boolean;
 }
 
+// El modo de precios (useTrmPricing) define cuál campo se envía:
+// COP directo (defecto) → priceCOP; conversión TRM habilitada → priceUSD
 export interface CreateProductDto {
   code: string;
   name: string;
   scope: string | null;
   subcategoryId: number;
-  priceUSD: number;
   isAddOn: boolean;
   maxQuantity: number | null;
+  priceCOP?: number | null;
+  priceUSD?: number | null;
 }
 
 export interface UpdateProductDto {
   name: string;
   scope: string | null;
   subcategoryId: number;
-  priceUSD: number;
   maxQuantity: number | null;
   isActive: boolean;
+  priceCOP?: number | null;
+  priceUSD?: number | null;
+}
+
+export interface PricingSettingsDto {
+  /** false (defecto): precios directos en COP. true: COP = priceUSD * TRM vigente. */
+  useTrmPricing: boolean;
 }
 
 export interface CreateClientDto {

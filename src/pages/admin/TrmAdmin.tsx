@@ -4,6 +4,7 @@ import { TrendingUp } from 'lucide-react';
 import { exchangeRatesApi } from '../../api/services';
 import type { ExchangeRateDto } from '../../types/api';
 import { Pagination, usePagination } from '../../components/Pagination';
+import { useSettings } from '../../context/SettingsContext';
 import { money } from '../../utils/format';
 
 interface TrmAdminProps {
@@ -11,6 +12,8 @@ interface TrmAdminProps {
 }
 
 export function TrmAdmin({ notify }: TrmAdminProps) {
+  const { useTrmPricing, setUseTrmPricing } = useSettings();
+  const [toggling, setToggling] = useState(false);
   const [rates, setRates] = useState<ExchangeRateDto[]>([]);
   const [current, setCurrent] = useState<ExchangeRateDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,8 +58,39 @@ export function TrmAdmin({ notify }: TrmAdminProps) {
     }
   }
 
+  async function togglePricingMode(value: boolean) {
+    setToggling(true);
+    try {
+      await setUseTrmPricing(value);
+      notify(
+        value
+          ? 'Conversión por TRM habilitada: los precios se calculan como USD × TRM'
+          : 'Precios directos en COP (modo por defecto)',
+      );
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Error actualizando el parámetro', true);
+    } finally {
+      setToggling(false);
+    }
+  }
+
   return (
     <>
+      <div className="trm-form" style={{ alignItems: 'center' }}>
+        <label className="checkbox-field">
+          <input
+            type="checkbox"
+            checked={useTrmPricing}
+            disabled={toggling}
+            onChange={(e) => void togglePricingMode(e.target.checked)}
+          />
+          Conversión por TRM habilitada (precio base USD → COP = USD × TRM)
+        </label>
+        <span className="muted">
+          Deshabilitada (defecto): los precios se asignan y cotizan directamente en COP
+        </span>
+      </div>
+
       <div className="trm-card">
         <div>
           <small>TRM VIGENTE (USD → COP)</small>

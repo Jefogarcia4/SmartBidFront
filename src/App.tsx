@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage';
 import { CatalogPage } from './pages/CatalogPage';
 import { AdminPage } from './pages/admin/AdminPage';
 import { QuotationsPage } from './pages/QuotationsPage';
+import { SettingsProvider } from './context/SettingsContext';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -19,9 +20,15 @@ export default function App() {
 
   if (!user) return <LoginPage />;
 
-  if (view === 'admin') return <AdminPage onBack={() => setView('catalog')} />;
-  if (view === 'quotes') return <QuotationsPage onBack={() => setView('catalog')} />;
   return (
-    <CatalogPage onOpenAdmin={() => setView('admin')} onOpenQuotes={() => setView('quotes')} />
+    <SettingsProvider>
+      {view === 'admin' ? (
+        <AdminPage onBack={() => setView('catalog')} />
+      ) : view === 'quotes' ? (
+        <QuotationsPage onBack={() => setView('catalog')} />
+      ) : (
+        <CatalogPage onOpenAdmin={() => setView('admin')} onOpenQuotes={() => setView('quotes')} />
+      )}
+    </SettingsProvider>
   );
 }

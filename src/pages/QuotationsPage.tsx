@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, FileText, LogOut, X, RefreshCw } from 'lucide-react';
+import { ArrowLeft, FileText, FileDown, LogOut, X, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { quotationsApi } from '../api/services';
 import { QUOTATION_STATUSES } from '../types/api';
@@ -32,6 +32,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
   const [newStatus, setNewStatus] = useState<number | ''>('');
   const [statusNote, setStatusNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [docLoading, setDocLoading] = useState(false);
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null);
   const pager = usePagination(quotations, 10);
 
@@ -93,6 +94,25 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
       notify(err instanceof Error ? err.message : 'Error cambiando el estado', true);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function generateDocument() {
+    if (!detail) return;
+    setDocLoading(true);
+    try {
+      const blob = await quotationsApi.generateDocument(detail.quotationId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Cotizacion_${detail.number}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+      notify('Documento Word generado');
+    } catch (err) {
+      notify(err instanceof Error ? err.message : 'Error generando el documento', true);
+    } finally {
+      setDocLoading(false);
     }
   }
 
@@ -274,6 +294,18 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                     <span className="muted"> · USD {money(detail.totalUSD)}</span>
                   )}
                 </strong>
+              </div>
+
+              <div className="panel-title" style={{ padding: '4px 0 0' }}>
+                Documento de cotización
+              </div>
+              <div className="admin-toolbar">
+                <button className="btn-add" disabled={docLoading} onClick={() => void generateDocument()}>
+                  <FileDown size={14} /> {docLoading ? 'Generando…' : 'Generar Word (FlexGPT)'}
+                </button>
+                <span className="muted">
+                  Textos redactados con FlexGPT; sin configurar usa la plantilla estándar
+                </span>
               </div>
 
               <div className="panel-title" style={{ padding: '4px 0 0' }}>

@@ -1,4 +1,10 @@
-const BASE_URL = 'http://localhost:5080';
+/**
+ * Base del API. Se configura con VITE_API_URL (`.env` en desarrollo,
+ * `.env.production` en el build de Azure Static Web Apps).
+ */
+export const BASE_URL = (
+  import.meta.env.VITE_API_URL ?? 'https://smartbidapi-grffgqhfcqekbfba.eastus-01.azurewebsites.net'
+).replace(/\/$/, '');
 
 const TOKEN_KEY = 'smartbid.auth';
 

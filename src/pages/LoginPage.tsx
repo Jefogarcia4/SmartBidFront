@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ApiError } from '../api/http';
+import { ApiError, BASE_URL } from '../api/http';
 import { isO365Configured } from '../auth/msal';
 
 export function LoginPage() {
@@ -64,7 +64,7 @@ export function LoginPage() {
       if (err instanceof ApiError && err.status === 401) {
         setError('Credenciales inválidas. Verifica tu email y contraseña.');
       } else {
-        setError('No se pudo conectar con el API. ¿Está corriendo en http://localhost:5080?');
+        setError(`No se pudo conectar con el API (${BASE_URL}).`);
       }
     } finally {
       setLoading(false);

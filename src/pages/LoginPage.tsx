@@ -87,7 +87,7 @@ export function LoginPage() {
               type="email"
               required
               autoComplete="username"
-              placeholder="usuario@smartbid.co"
+              placeholder="usuario@greencss.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -162,7 +162,6 @@ export function LoginPage() {
               Para el flujo real, define ClientId/TenantId en <code>.env</code>.
             </div>
           )}
-          <div className="login-hint">Demo: admin@smartbid.co / Smartbid123*</div>
         </form>
       </div>
     </div>

@@ -1,6 +1,10 @@
 import { http, tokenStore } from './http';
 import { acquireMicrosoftToken, microsoftLogout } from '../auth/msal';
 import type {
+  ApiKeyAdminDto,
+  ApiKeyDto,
+  IssuedApiKeyDto,
+  UserOptionDto,
   AddBaseItemDto,
   CategoryDto,
   ChangeStatusDto,
@@ -63,6 +67,28 @@ export const authApi = {
     tokenStore.clear();
     void microsoftLogout();
   },
+};
+
+/** API keys personales para la integración con FlexGPT. */
+export const apiKeysApi = {
+  mine: () => http.get<ApiKeyDto[]>('/api/apikeys'),
+  /** El valor en claro solo viene en esta respuesta; después solo queda su hash. */
+  create: (name: string, expiresInDays?: number | null) =>
+    http.post<IssuedApiKeyDto>('/api/apikeys', { name, expiresInDays: expiresInDays ?? null }),
+  revoke: (id: number) => http.del<void>(`/api/apikeys/${id}`),
+
+  // --- Solo ADMIN ---
+  all: (userId?: number) =>
+    http.get<ApiKeyAdminDto[]>(`/api/admin/apikeys${userId ? `?userId=${userId}` : ''}`),
+  users: () => http.get<UserOptionDto[]>('/api/admin/apikeys/users'),
+  /** Emite una key a nombre de otro usuario, para entregársela. */
+  createFor: (userId: number, name: string, expiresInDays?: number | null) =>
+    http.post<IssuedApiKeyDto>('/api/admin/apikeys', {
+      userId,
+      name,
+      expiresInDays: expiresInDays ?? null,
+    }),
+  revokeAny: (id: number) => http.del<void>(`/api/admin/apikeys/${id}`),
 };
 
 export const catalogApi = {

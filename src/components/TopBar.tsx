@@ -1,4 +1,4 @@
-import { Server, ClipboardList, Users, Bot, Shield, LayoutGrid, LogOut, Settings, FileText } from 'lucide-react';
+import { Server, ClipboardList, Users, Bot, Shield, LayoutGrid, LogOut, Settings, FileText, Plug } from 'lucide-react';
 import type { CategoryDto } from '../types/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,9 +16,17 @@ interface TopBarProps {
   onSelect: (id: number) => void;
   onOpenAdmin?: () => void;
   onOpenQuotes?: () => void;
+  onOpenIntegrations?: () => void;
 }
 
-export function TopBar({ categories, activeId, onSelect, onOpenAdmin, onOpenQuotes }: TopBarProps) {
+export function TopBar({
+  categories,
+  activeId,
+  onSelect,
+  onOpenAdmin,
+  onOpenQuotes,
+  onOpenIntegrations,
+}: TopBarProps) {
   const { user, logout } = useAuth();
   const initials = (user?.fullName ?? '?')
     .split(' ')
@@ -49,6 +57,11 @@ export function TopBar({ categories, activeId, onSelect, onOpenAdmin, onOpenQuot
       {onOpenQuotes && (
         <button className="family-tab" onClick={onOpenQuotes}>
           <FileText size={15} /> Mis Cotizaciones
+        </button>
+      )}
+      {onOpenIntegrations && (
+        <button className="family-tab" onClick={onOpenIntegrations}>
+          <Plug size={15} /> Integraciones
         </button>
       )}
       {user?.role === 'ADMIN' && onOpenAdmin && (

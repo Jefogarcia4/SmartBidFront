@@ -1,0 +1,159 @@
+/* ============================================================
+   Módulo de integraciones: API keys que los comerciales
+   registran en FlexGPT. Va aparte de global.css solo por
+   tamaño; usa los mismos tokens de diseño.
+   ============================================================ */
+
+.integration-guide {
+  background: var(--gradient-soft);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.integration-guide-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.integration-guide-head h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.integration-guide-head p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.88;
+  max-width: 78ch;
+}
+
+.integration-urls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.integration-url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.13);
+  border-radius: var(--radius-sm);
+  padding: 7px 8px 7px 12px;
+}
+
+.integration-url-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.integration-url code {
+  font-size: 12px;
+  color: #fff;
+}
+
+.integration-url .icon-btn {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.panel-hint {
+  margin: 0;
+  padding: 6px 16px 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  max-width: 90ch;
+}
+
+.key-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 16px 16px;
+}
+
+.key-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.key-form input,
+.key-form select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 13px;
+  min-width: 200px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.key-form input:focus,
+.key-form select:focus {
+  outline: 2px solid var(--purple-200);
+  border-color: var(--purple-400);
+}
+
+.key-prefix {
+  background: var(--purple-100);
+  color: var(--purple-800);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 12px;
+}
+
+.icon-btn.danger {
+  color: var(--danger);
+  border-color: #f7d3e1;
+}
+
+.icon-btn.danger:hover {
+  background: #fdeaf1;
+}
+
+.issued-warning {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #fff4e0;
+  color: #8a5a06;
+  border-radius: var(--radius-sm);
+  padding: 11px 13px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.issued-value {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0 10px;
+}
+
+.issued-value code {
+  flex: 1;
+  background: var(--bg);
+  border: 1px dashed var(--purple-200);
+  border-radius: var(--radius-sm);
+  padding: 11px 12px;
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--purple-800);
+}

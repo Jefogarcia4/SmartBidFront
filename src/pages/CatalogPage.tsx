@@ -10,9 +10,10 @@ import { ExportModal } from '../components/ExportModal';
 interface CatalogPageProps {
   onOpenAdmin?: () => void;
   onOpenQuotes?: () => void;
+  onOpenIntegrations?: () => void;
 }
 
-export function CatalogPage({ onOpenAdmin, onOpenQuotes }: CatalogPageProps) {
+export function CatalogPage({ onOpenAdmin, onOpenQuotes, onOpenIntegrations }: CatalogPageProps) {
   const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [subcategories, setSubcategories] = useState<SubcategoryDto[]>([]);
   const [products, setProducts] = useState<ProductDto[]>([]);
@@ -85,6 +86,7 @@ export function CatalogPage({ onOpenAdmin, onOpenQuotes }: CatalogPageProps) {
         onSelect={setCategoryId}
         onOpenAdmin={onOpenAdmin}
         onOpenQuotes={onOpenQuotes}
+        onOpenIntegrations={onOpenIntegrations}
       />
 
       <div className="app-body">

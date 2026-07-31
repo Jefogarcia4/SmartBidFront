@@ -232,3 +232,40 @@ export interface CreateExchangeRateDto {
   effectiveDate: string;
   rateUSDCOP: number;
 }
+
+// ---------- Integración FlexGPT: API keys del tool server ----------
+
+export interface ApiKeyDto {
+  apiKeyId: number;
+  name: string;
+  /** Primeros caracteres, para identificarla sin revelarla */
+  keyPrefix: string;
+  createdAt: string;
+  expiresAt: string | null;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  isActive: boolean;
+}
+
+/** Vista de ADMIN: incluye a quién pertenece la key. */
+export interface ApiKeyAdminDto extends ApiKeyDto {
+  userId: number;
+  userEmail: string;
+  userFullName: string;
+  userIsActive: boolean;
+}
+
+/** El valor en claro de `apiKey` solo llega en la respuesta de creación. */
+export interface IssuedApiKeyDto {
+  info: ApiKeyDto;
+  apiKey: string;
+}
+
+export interface UserOptionDto {
+  userId: number;
+  fullName: string;
+  email: string;
+  roleCode: string;
+  isActive: boolean;
+}
+

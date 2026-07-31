@@ -421,7 +421,12 @@ function TeamKeys({
   );
 }
 
-/** La key en claro se muestra UNA sola vez: después solo queda su hash en la base. */
+/**
+ * La key en claro se muestra UNA sola vez: después solo queda su hash en la base.
+ *
+ * Por eso este modal NO se cierra al hacer clic afuera y pide confirmación si todavía no se
+ * copió: un clic distraído costaba la key y obligaba a emitir otra.
+ */
 function IssuedKeyModal({
   issued,
   onClose,
@@ -430,16 +435,29 @@ function IssuedKeyModal({
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   const copy = async () => {
-    await navigator.clipboard.writeText(issued.key.apiKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(issued.key.apiKey);
+      setCopied(true);
+      setCopyFailed(false);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Sin permiso de portapapeles (o contexto no seguro): se selecciona para copiar a mano.
+      setCopyFailed(true);
+    }
+  };
+
+  const tryClose = () => {
+    if (copied || confirm('Todavía no copiaste la key. Si cerrás no vas a poder verla de nuevo. ¿Cerrar igual?')) {
+      onClose();
+    }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal">
         <div className="modal-header">
           <KeyRound size={18} /> API key de {issued.owner}
         </div>
@@ -452,20 +470,32 @@ function IssuedKeyModal({
             </span>
           </div>
           <div className="issued-value">
-            <code>{issued.key.apiKey}</code>
+            {/* readOnly + selectall: si el portapapeles falla, se puede copiar a mano */}
+            <input
+              readOnly
+              value={issued.key.apiKey}
+              onFocus={(e) => e.currentTarget.select()}
+              onClick={(e) => e.currentTarget.select()}
+            />
             <button className="btn-add" onClick={copy}>
               {copied ? <Check size={14} /> : <Copy size={14} />}
               {copied ? 'Copiada' : 'Copiar'}
             </button>
           </div>
+          {copyFailed && (
+            <p className="panel-hint">
+              No pude usar el portapapeles. Hacé clic en el campo para seleccionarla y copiala con
+              Ctrl+C.
+            </p>
+          )}
           <p className="panel-hint">
             En FlexGPT: autenticación <code>Bearer</code> y pegá <strong>solo la key</strong>, sin
             escribir la palabra <code>Bearer</code>.
           </p>
         </div>
         <div className="modal-actions">
-          <button className="btn-add" onClick={onClose}>
-            Listo
+          <button className="btn-add" onClick={tryClose}>
+            {copied ? 'Listo' : 'Ya la guardé'}
           </button>
         </div>
       </div>

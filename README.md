@@ -26,7 +26,7 @@ src/
 ├─ api/          → http.ts (fetch + Basic Auth) y services.ts (auth, catálogo, clientes, cotizaciones)
 ├─ types/        → DTOs espejo del API (api.ts)
 ├─ context/      → AuthContext (sesión Basic Auth) y CartContext (carrito de cotización)
-├─ components/   → TopBar (familias), ProductTable, StatsBar, CartSidebar, ExportModal, Stepper
+├─ components/   → TopBar (categorías), ProductTable, StatsBar, CartSidebar, ExportModal, Stepper
 ├─ pages/        → LoginPage y CatalogPage
 └─ styles/       → global.css (design tokens con la paleta SmartBid)
 ```
@@ -58,6 +58,6 @@ Paleta: `#3E2682` · `#5F10D2` · `#AA78F5` · `#D5BCFA` · `#E4E6F3` (degradado
 ## Flujo implementado
 
 1. **Login** con Basic Auth (valida contra `GET /api/auth/me`; credenciales en sessionStorage).
-2. **Familias** (categorías) como tabs superiores → **subcategorías** como chips → **productos** en tabla con stepper de cantidad.
+2. **Categorías** como tabs superiores → **subcategorías** como chips → **productos** en tabla con stepper de cantidad.
 3. **Carrito lateral**: paquetes base con sus **add-ons compatibles** (`GET /api/products/{id}/addons`), respetando la regla del API de que un add-on requiere paquete base.
 4. **Exportar Cotización**: selecciona cliente (`GET /api/clients`) → `POST /api/quotations` → `POST /api/quotations/{id}/items` por cada paquete (con add-ons anidados). El API congela precios (RN-004) y recalcula totales COP/USD.

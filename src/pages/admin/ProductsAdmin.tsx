@@ -185,7 +185,7 @@ export function ProductsAdmin({ notify }: Props) {
     <>
       <div className="admin-toolbar">
         <select value={filterCat} onChange={(e) => setFilterCat(e.target.value === '' ? '' : Number(e.target.value))}>
-          <option value="">Todas las familias</option>
+          <option value="">Todas las categorías</option>
           {categories.map((c) => (
             <option key={c.categoryId} value={c.categoryId}>
               {c.name}

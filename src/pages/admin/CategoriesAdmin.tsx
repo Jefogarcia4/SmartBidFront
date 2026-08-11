@@ -119,10 +119,10 @@ export function CategoriesAdmin({ notify }: Props) {
 
   return (
     <div className="admin-grid-2">
-      {/* --- Categorías (familias) --- */}
+      {/* --- Categorías --- */}
       <div className="catalog-card">
         <div className="panel-title">
-          Familias
+          Categorías
           <button
             className="btn-add"
             onClick={() =>
@@ -183,7 +183,7 @@ export function CategoriesAdmin({ notify }: Props) {
         <Pagination pager={catPager} />
       </div>
 
-      {/* --- Subcategorías de la familia seleccionada --- */}
+      {/* --- Subcategorías de la categoría seleccionada --- */}
       <div className="catalog-card">
         <div className="panel-title">
           Subcategorías{' '}
@@ -201,7 +201,7 @@ export function CategoriesAdmin({ notify }: Props) {
         </div>
         {selectedCat == null ? (
           <div className="empty-state" style={{ padding: '40px 16px' }}>
-            Selecciona una familia para ver sus subcategorías
+            Selecciona una categoría para ver sus subcategorías
           </div>
         ) : (
           <table className="product-table">
@@ -250,7 +250,7 @@ export function CategoriesAdmin({ notify }: Props) {
         <div className="modal-overlay" onClick={() => setCatForm(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              {catForm.id == null ? 'Nueva familia' : 'Editar familia'}
+              {catForm.id == null ? 'Nueva categoría' : 'Editar categoría'}
               <button className="modal-close" onClick={() => setCatForm(null)}>
                 <X size={15} />
               </button>

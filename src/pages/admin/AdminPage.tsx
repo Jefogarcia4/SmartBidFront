@@ -10,7 +10,7 @@ type AdminTab = 'products' | 'categories' | 'trm' | 'clients';
 
 const TABS: { id: AdminTab; label: string; icon: typeof Package }[] = [
   { id: 'products', label: 'Productos y Add-ons', icon: Package },
-  { id: 'categories', label: 'Familias y Subcategorías', icon: FolderTree },
+  { id: 'categories', label: 'Categorías y Subcategorías', icon: FolderTree },
   { id: 'trm', label: 'TRM', icon: TrendingUp },
   { id: 'clients', label: 'Clientes', icon: Building2 },
 ];

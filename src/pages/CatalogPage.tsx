@@ -23,7 +23,7 @@ export function CatalogPage({ onOpenAdmin, onOpenQuotes, onOpenIntegrations }: C
   const [exportOpen, setExportOpen] = useState(false);
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null);
 
-  // Familias (categorías)
+  // Categorías
   useEffect(() => {
     catalogApi
       .categories()
@@ -31,7 +31,7 @@ export function CatalogPage({ onOpenAdmin, onOpenQuotes, onOpenIntegrations }: C
       .catch(() => setToast({ text: 'Error cargando categorías del API', error: true }));
   }, []);
 
-  // Subcategorías de la familia activa
+  // Subcategorías de la categoría activa
   useEffect(() => {
     if (categoryId == null) return;
     setSubcategoryId(null);

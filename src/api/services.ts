@@ -19,7 +19,9 @@ import type {
   CreateQuotationDto,
   CreateSubcategoryDto,
   CurrentUser,
+  DeliveryRoleDto,
   ExchangeRateDto,
+  PackageTypeDto,
   PricingSettingsDto,
   ProductDto,
   QuotationDto,
@@ -106,11 +108,17 @@ export const catalogApi = {
   updateSubcategory: (id: number, dto: UpdateSubcategoryDto) =>
     http.put<SubcategoryDto>(`/api/subcategories/${id}`, dto),
 
+  /** Tipos de paquete y roles de entrega: catálogos de apoyo de la ficha del paquete. */
+  packageTypes: () => http.get<PackageTypeDto[]>('/api/catalog/package-types'),
+  deliveryRoles: () => http.get<DeliveryRoleDto[]>('/api/catalog/delivery-roles'),
+
   products: (filter: {
     categoryId?: number;
     subcategoryId?: number;
     search?: string;
     isAddOn?: boolean;
+    packageTypeId?: number;
+    platform?: string;
     /** undefined = solo activos (catálogo); null = todos (admin) */
     isActive?: boolean | null;
   }) => {
@@ -119,6 +127,8 @@ export const catalogApi = {
     if (filter.subcategoryId) qs.set('subcategoryId', String(filter.subcategoryId));
     if (filter.search) qs.set('search', filter.search);
     if (filter.isAddOn !== undefined) qs.set('isAddOn', String(filter.isAddOn));
+    if (filter.packageTypeId) qs.set('packageTypeId', String(filter.packageTypeId));
+    if (filter.platform) qs.set('platform', filter.platform);
     if (filter.isActive !== null) qs.set('isActive', String(filter.isActive ?? true));
     return http.get<ProductDto[]>(`/api/products?${qs.toString()}`);
   },

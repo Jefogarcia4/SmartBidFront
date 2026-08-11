@@ -23,11 +23,58 @@ export interface SubcategoryDto {
   isActive: boolean;
 }
 
+/** Tipo de paquete: Base, Add-on, Prueba / Validación, Mantenimiento… */
+export interface PackageTypeDto {
+  packageTypeId: number;
+  name: string;
+  description: string | null;
+  /** Los paquetes de este tipo se cotizan como complemento de un paquete base */
+  isAddOnType: boolean;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+/** Perfil que ejecuta el paquete (PM, Junior, Implementador, Senior). */
+export interface DeliveryRoleDto {
+  deliveryRoleId: number;
+  code: string;
+  name: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+/** Horas estimadas de un paquete para un rol de entrega. */
+export interface ProductRoleHourDto {
+  deliveryRoleId: number;
+  roleCode: string;
+  roleName: string;
+  hours: number;
+}
+
+export interface SetRoleHourDto {
+  deliveryRoleId: number;
+  hours: number;
+}
+
 export interface ProductDto {
   productId: number;
   code: string;
   name: string;
+  packageTypeId: number | null;
+  packageTypeName: string | null;
+  /** Tecnologías sobre las que se ejecuta; multivalor separado por " / " */
+  platform: string | null;
+  /** Qué logra el paquete, en una frase */
+  objective: string | null;
+  /** Actividades incluidas */
   scope: string | null;
+  /** Lo que el cliente debe tener listo */
+  prerequisites: string | null;
+  /** Lo que queda fuera del alcance */
+  exclusions: string | null;
+  /** Total de horas; es la suma de roleHours */
+  estimatedHours: number | null;
+  roleHours: ProductRoleHourDto[];
   subcategoryId: number;
   subcategoryName: string;
   categoryName: string;
@@ -171,27 +218,34 @@ export interface UpdateSubcategoryDto {
   isActive: boolean;
 }
 
-// El modo de precios (useTrmPricing) define cuál campo se envía:
-// COP directo (defecto) → priceCOP; conversión TRM habilitada → priceUSD
-export interface CreateProductDto {
-  code: string;
-  name: string;
+/** Ficha técnica del paquete; compartida por creación y edición. */
+interface ProductSheetDto {
   scope: string | null;
   subcategoryId: number;
-  isAddOn: boolean;
   maxQuantity: number | null;
+  packageTypeId?: number | null;
+  platform?: string | null;
+  objective?: string | null;
+  prerequisites?: string | null;
+  exclusions?: string | null;
+  /** null/undefined = no tocar las horas; [] = borrarlas */
+  roleHours?: SetRoleHourDto[] | null;
   priceCOP?: number | null;
   priceUSD?: number | null;
 }
 
-export interface UpdateProductDto {
+// El modo de precios (useTrmPricing) define cuál campo se envía:
+// COP directo (defecto) → priceCOP; conversión TRM habilitada → priceUSD
+// isAddOn se deriva del tipo de paquete cuando se envía packageTypeId.
+export interface CreateProductDto extends ProductSheetDto {
+  code: string;
   name: string;
-  scope: string | null;
-  subcategoryId: number;
-  maxQuantity: number | null;
+  isAddOn: boolean;
+}
+
+export interface UpdateProductDto extends ProductSheetDto {
+  name: string;
   isActive: boolean;
-  priceCOP?: number | null;
-  priceUSD?: number | null;
 }
 
 export interface PricingSettingsDto {

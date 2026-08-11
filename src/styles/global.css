@@ -365,6 +365,131 @@ textarea {
   white-space: pre-line;
 }
 
+/* ============ Ficha del paquete ============ */
+
+/* Plataforma: el campo es multivalor y se pinta un chip por tecnología. */
+.platform-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.platform-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #faf9ff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.sheet-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.sheet-hours {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--purple-600);
+}
+
+.sheet-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sheet-block-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--purple-600);
+}
+
+.cell-hours {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.hours-total {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.hours-split {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+/* Un paquete importado sin costo no es cotizable: el precio en cero se destaca. */
+.cost-total.cost-missing {
+  color: #c2410c;
+}
+
+.role-hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.role-hours-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.role-hours-cell span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.role-hours-cell input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 13px;
+  outline: none;
+  background: var(--surface);
+}
+
+.role-hours-cell input:focus {
+  border-color: var(--purple-400);
+}
+
+.role-hours-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.field-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .cell-cost {
   text-align: right;
   white-space: nowrap;

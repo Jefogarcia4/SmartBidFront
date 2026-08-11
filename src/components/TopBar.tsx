@@ -38,7 +38,7 @@ export function TopBar({
   return (
     <header className="topbar">
       <span className="brand">SmartBid</span>
-      <span className="families-label">FAMILIAS:</span>
+      <span className="families-label">CATEGORÍAS:</span>
       <nav className="family-tabs">
         {categories.map((c) => {
           const Icon = ICONS[c.icon ?? ''] ?? LayoutGrid;

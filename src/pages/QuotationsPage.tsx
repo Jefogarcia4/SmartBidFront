@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, FileText, FileDown, LogOut, X, RefreshCw } from 'lucide-react';
+import { ArrowLeft, FileText, FileDown, LogOut, X, RefreshCw, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { quotationsApi } from '../api/services';
 import { QUOTATION_STATUSES } from '../types/api';
 import type { QuotationDto, QuotationListItemDto } from '../types/api';
 import { Pagination, usePagination } from '../components/Pagination';
+import { SowChatModal } from '../components/SowChatModal';
 import { money } from '../utils/format';
 
 const STATUS_CLASS: Record<string, string> = {
@@ -34,6 +35,8 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
   const [saving, setSaving] = useState(false);
   const [docLoading, setDocLoading] = useState(false);
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null);
+  // Cotización cuyo chat de SOW está abierto (número + cliente, que es lo único que necesita).
+  const [sowChat, setSowChat] = useState<{ number: string; clientName: string } | null>(null);
   const pager = usePagination(quotations, 10);
 
   const notify = (text: string, error?: boolean) => setToast({ text, error });
@@ -193,6 +196,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                   <th style={{ textAlign: 'right' }}>Total USD</th>
                   <th>Creada</th>
                   <th>Válida hasta</th>
+                  <th style={{ textAlign: 'center' }}>SOW</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,6 +224,19 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                     </td>
                     <td className="muted">{q.creationDate}</td>
                     <td className="muted">{q.validityDate}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      <button
+                        className="ai-btn"
+                        title={`Generar el SOW de ${q.number} con IA`}
+                        // La fila abre el detalle: hay que frenar la propagación del clic.
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSowChat({ number: q.number, clientName: q.clientName });
+                        }}
+                      >
+                        <Sparkles size={15} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -300,13 +317,22 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                 Documento de cotización
               </div>
               <div className="admin-toolbar">
-                <button className="btn-add" disabled={docLoading} onClick={() => void generateDocument()}>
-                  <FileDown size={14} /> {docLoading ? 'Generando…' : 'Generar Word (FlexGPT)'}
+                <button
+                  className="btn-add"
+                  onClick={() =>
+                    setSowChat({ number: detail.number, clientName: detail.clientName })
+                  }
+                >
+                  <Sparkles size={14} /> Generar SOW con IA
                 </button>
-                <span className="muted">
-                  Textos redactados con FlexGPT; sin configurar usa la plantilla estándar
-                </span>
+                <button className="btn-secondary" disabled={docLoading} onClick={() => void generateDocument()}>
+                  <FileDown size={14} /> {docLoading ? 'Generando…' : 'Word estándar'}
+                </button>
               </div>
+              <span className="muted" style={{ fontSize: 12 }}>
+                Con IA: el asistente lee la cotización por el MCP y redacta el alcance conversando
+                con vos. Word estándar: descarga directa con la plantilla del sistema.
+              </span>
 
               <div className="panel-title" style={{ padding: '4px 0 0' }}>
                 Cambiar estado
@@ -340,6 +366,14 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {sowChat && (
+        <SowChatModal
+          quotationNumber={sowChat.number}
+          clientName={sowChat.clientName}
+          onClose={() => setSowChat(null)}
+        />
       )}
 
       {toast && <div className={`toast ${toast.error ? 'error' : ''}`}>{toast.text}</div>}

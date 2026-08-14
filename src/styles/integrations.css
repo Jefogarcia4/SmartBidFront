@@ -1,8 +1,121 @@
 /* ============================================================
-   Módulo de integraciones: API keys que los comerciales
-   registran en FlexGPT. Va aparte de global.css solo por
-   tamaño; usa los mismos tokens de diseño.
+   Integraciones con FlexGPT: API keys del tool server y el
+   chat agéntico embebido para generar el SOW.
+   Va aparte de global.css solo por tamaño; mismos tokens.
    ============================================================ */
+
+/* ---------- Botón de IA en la tabla de cotizaciones ---------- */
+.ai-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 9px;
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(95, 16, 210, 0.28);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.ai-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(95, 16, 210, 0.36);
+}
+
+/* ---------- Chat agéntico embebido ---------- */
+.sow-chat {
+  width: min(1100px, 96vw);
+  height: min(84vh, 900px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.sow-chat-head {
+  background: var(--gradient);
+  color: #fff;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sow-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  min-width: 0;
+}
+
+.sow-chat-title small {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 500;
+  opacity: 0.88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sow-chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.sow-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sow-chat-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.sow-chat-btn.icon-only {
+  padding: 6px;
+  border-radius: 9px;
+}
+
+/* El iframe ocupa todo lo que sobra: el chat necesita alto para ser usable */
+.sow-chat-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: var(--bg);
+}
+
+@media (max-width: 640px) {
+  .sow-chat {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  /* En pantallas chicas solo queda cerrar: los otros botones se van al menú del chat */
+  .sow-chat-btn:not(.icon-only) {
+    display: none;
+  }
+}
 
 .integration-guide {
   background: var(--gradient-soft);

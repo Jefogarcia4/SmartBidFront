@@ -2,10 +2,68 @@ import { useMemo, useState } from 'react';
 import { Check, Copy, ExternalLink, Sparkles, X } from 'lucide-react';
 
 /**
- * Base del chat agéntico de FlexGPT. Se configura con VITE_FLEXGPT_CHAT_URL para poder
- * apuntar a otro modelo o a otra instancia sin recompilar la lógica.
+ * Base del chat agéntico de FlexGPT. Configurable para apuntar a otro modelo o instancia.
  */
-const CHAT_URL = import.meta.env.VITE_FLEXGPT_CHAT_URL ?? 'https://green.flexgpt.co/?model=generador-sow-mcp';
+const CHAT_URL =
+  import.meta.env.VITE_FLEXGPT_CHAT_URL ?? 'https://green.flexgpt.co/?model=generador-sow-mcp';
+
+/**
+ * ¿Embeber el chat en un iframe (experiencia buscada) o abrirlo en ventana propia?
+ *
+ * Embebido por defecto. La contrapartida está del lado de FlexGPT: su cookie de sesión solo
+ * viaja a un iframe de otro sitio si está marcada `SameSite=None; Secure`. FlexGPT corre
+ * Open WebUI, que expone exactamente esas dos opciones:
+ *
+ *     WEBUI_SESSION_COOKIE_SAME_SITE=none
+ *     WEBUI_SESSION_COOKIE_SECURE=true
+ *
+ * Sin eso, el chat embebido muestra la pantalla de login aunque el usuario ya esté autenticado
+ * en FlexGPT; el botón "Abrir aparte" de la cabecera es la salida mientras tanto.
+ */
+export const sowChatEmbedded = import.meta.env.VITE_FLEXGPT_EMBED !== 'false';
+
+/**
+ * Instrucción con la que arranca el chat.
+ *
+ * Nombra la herramienta del MCP de forma explícita y descarta otras fuentes: el agente tiene
+ * además una base de conocimiento en Excel y, si no se le indica, busca ahí primero y responde
+ * que no encuentra la cotización.
+ */
+function buildPrompt(numero: string, cliente?: string): string {
+  return (
+    `Usá la herramienta obtener_cotizacion del MCP de SmartBid para leer la cotización ${numero}` +
+    `${cliente ? ` del cliente ${cliente}` : ''} y con esos datos redactá el SOW. ` +
+    'Las cotizaciones están únicamente en SmartBid: no busques en archivos, hojas de cálculo ' +
+    'ni otras fuentes. Los precios, cantidades y totales tomalos tal cual vienen de la herramienta.'
+  );
+}
+
+/** URL completa del chat: modelo + instrucción inicial. */
+export function buildSowChatUrl(numero: string, cliente?: string): string {
+  const url = new URL(CHAT_URL);
+  url.searchParams.set('q', buildPrompt(numero, cliente));
+  return url.toString();
+}
+
+/**
+ * Abre el chat en una ventana propia. Devuelve false si el navegador bloqueó el emergente,
+ * para que la pantalla que lo llama avise en vez de quedarse en silencio.
+ */
+export function openSowChatWindow(numero: string, cliente?: string): boolean {
+  const width = Math.min(1180, Math.round(window.screen.availWidth * 0.9));
+  const height = Math.min(880, Math.round(window.screen.availHeight * 0.9));
+  const left = Math.round((window.screen.availWidth - width) / 2);
+  const top = Math.round((window.screen.availHeight - height) / 2);
+
+  const win = window.open(
+    buildSowChatUrl(numero, cliente),
+    `smartbid-sow-${numero}`,
+    `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
+  );
+
+  win?.focus();
+  return win != null;
+}
 
 interface SowChatModalProps {
   quotationNumber: string;
@@ -14,26 +72,16 @@ interface SowChatModalProps {
 }
 
 /**
- * Abre el modelo agéntico de FlexGPT embebido, ya apuntando a una cotización concreta.
- *
- * El modelo consulta los datos por el MCP de SmartBid (/mcp), así que aquí NO se le pasan
- * precios ni ítems: solo el número de cotización. Todo lo demás lo resuelve él con las
- * herramientas, que ya aplican el alcance por comercial.
- *
- * El sitio de FlexGPT no envía X-Frame-Options ni CSP frame-ancestors, por eso se puede
- * embeber. Aun así hay un botón para abrirlo en una pestaña: si la cookie de sesión de
- * FlexGPT es SameSite=Lax no viaja dentro del iframe y el chat mostraría el login.
+ * Chat embebido: es la experiencia buscada, con el asistente dentro de SmartBid.
+ * Si FlexGPT todavía no permite la cookie cross-site, aquí se verá su pantalla de login y el
+ * botón "Abrir aparte" resuelve el caso sin salir del flujo (ver sowChatEmbedded).
  */
 export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatModalProps) {
   const [copied, setCopied] = useState(false);
-
-  // Prompt inicial: Open WebUI lo toma del parámetro `q` de la URL.
-  const chatUrl = useMemo(() => {
-    const prompt = `Generá el SOW de la cotización ${quotationNumber}${clientName ? ` (${clientName})` : ''}.`;
-    const url = new URL(CHAT_URL);
-    url.searchParams.set('q', prompt);
-    return url.toString();
-  }, [quotationNumber, clientName]);
+  const chatUrl = useMemo(
+    () => buildSowChatUrl(quotationNumber, clientName),
+    [quotationNumber, clientName],
+  );
 
   const copyNumber = async () => {
     try {
@@ -41,7 +89,7 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      /* sin portapapeles: el número igual está visible para copiarlo a mano */
+      /* sin portapapeles: el número está visible para copiarlo a mano */
     }
   };
 
@@ -68,15 +116,13 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
               {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? 'Copiado' : 'Copiar N°'}
             </button>
-            <a
+            <button
               className="sow-chat-btn"
-              href={chatUrl}
-              target="_blank"
-              rel="noreferrer"
-              title="Abrir el chat en una pestaña nueva"
+              title="Abrir en una ventana propia (mantiene tu sesión de FlexGPT)"
+              onClick={() => openSowChatWindow(quotationNumber, clientName)}
             >
               <ExternalLink size={15} /> Abrir aparte
-            </a>
+            </button>
             <button className="sow-chat-btn icon-only" title="Cerrar" onClick={onClose}>
               <X size={17} />
             </button>

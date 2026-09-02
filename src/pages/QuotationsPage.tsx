@@ -5,7 +5,7 @@ import { quotationsApi } from '../api/services';
 import { QUOTATION_STATUSES } from '../types/api';
 import type { QuotationDto, QuotationListItemDto } from '../types/api';
 import { Pagination, usePagination } from '../components/Pagination';
-import { SowChatModal } from '../components/SowChatModal';
+import { SowChatModal, openSowChatWindow, sowChatEmbedded } from '../components/SowChatModal';
 import { money } from '../utils/format';
 
 const STATUS_CLASS: Record<string, string> = {
@@ -40,6 +40,20 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
   const pager = usePagination(quotations, 10);
 
   const notify = (text: string, error?: boolean) => setToast({ text, error });
+
+  /**
+   * Abre el generador de SOW. Por defecto en ventana propia: dentro de un iframe la sesión de
+   * FlexGPT no viaja y el chat vuelve a pedir credenciales (ver SowChatModal).
+   */
+  function openSow(number: string, clientName: string) {
+    if (sowChatEmbedded) {
+      setSowChat({ number, clientName });
+      return;
+    }
+    if (!openSowChatWindow(number, clientName)) {
+      notify('El navegador bloqueó la ventana del asistente. Permití las ventanas emergentes de este sitio.', true);
+    }
+  }
 
   async function load() {
     if (!user) return;
@@ -231,7 +245,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                         // La fila abre el detalle: hay que frenar la propagación del clic.
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSowChat({ number: q.number, clientName: q.clientName });
+                          openSow(q.number, q.clientName);
                         }}
                       >
                         <Sparkles size={15} />
@@ -319,9 +333,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
               <div className="admin-toolbar">
                 <button
                   className="btn-add"
-                  onClick={() =>
-                    setSowChat({ number: detail.number, clientName: detail.clientName })
-                  }
+                  onClick={() => openSow(detail.number, detail.clientName)}
                 >
                   <Sparkles size={14} /> Generar SOW con IA
                 </button>

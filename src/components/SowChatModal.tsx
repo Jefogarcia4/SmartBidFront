@@ -25,16 +25,24 @@ export const sowChatEmbedded = import.meta.env.VITE_FLEXGPT_EMBED !== 'false';
 /**
  * Instrucción con la que arranca el chat.
  *
- * Nombra la herramienta del MCP de forma explícita y descarta otras fuentes: el agente tiene
+ * Nombra las herramientas del MCP de forma explícita y descarta otras fuentes: el agente tiene
  * además una base de conocimiento en Excel y, si no se le indica, busca ahí primero y responde
  * que no encuentra la cotización.
+ *
+ * El último paso se pide aparte y en imperativo porque el modelo daba por terminada la tarea al
+ * escribir el SOW en el chat: redactaba las nueve secciones y no llamaba `generar_sow`, así que
+ * el comercial se quedaba con el texto y sin el .docx. El entregable es el archivo, no el texto.
  */
 function buildPrompt(numero: string, cliente?: string): string {
   return (
     `Usá la herramienta obtener_cotizacion del MCP de SmartBid para leer la cotización ${numero}` +
     `${cliente ? ` del cliente ${cliente}` : ''} y con esos datos redactá el SOW. ` +
     'Las cotizaciones están únicamente en SmartBid: no busques en archivos, hojas de cálculo ' +
-    'ni otras fuentes. Los precios, cantidades y totales tomalos tal cual vienen de la herramienta.'
+    'ni otras fuentes. Los precios, cantidades y totales tomalos tal cual vienen de la herramienta. ' +
+    'Consultá obtener_plantilla_sow para saber qué secciones redactar. ' +
+    'Cuando termines de redactarlas, llamá obligatoriamente a generar_sow con esos textos y ' +
+    'pasame el enlace de descarga que devuelve: el entregable es el documento Word, no el texto ' +
+    'del chat, y sin esa llamada no existe ningún archivo que yo pueda descargar.'
   );
 }
 

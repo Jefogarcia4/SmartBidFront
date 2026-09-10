@@ -186,6 +186,284 @@ textarea {
   color: var(--purple-600);
 }
 
+/* ============ App launcher (categorías estilo cuadrícula) ============ */
+.topbar-spacer {
+  flex: 1;
+}
+
+.launcher {
+  position: relative;
+}
+
+.launcher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 320px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: all 0.18s ease;
+}
+
+.launcher-btn:hover {
+  border-color: var(--purple-400);
+  color: var(--purple-600);
+}
+
+.launcher-btn.open {
+  background: var(--gradient);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(95, 16, 210, 0.35);
+}
+
+.launcher-btn-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.launcher-caret {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.launcher-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: min(600px, calc(100vw - 48px));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 14px;
+  z-index: 40;
+  animation: menu-in 0.16s ease;
+}
+
+.launcher-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.launcher-panel-head strong {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.launcher-panel-head small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  max-height: 62vh;
+  overflow-y: auto;
+}
+
+.launcher-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 14px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: all 0.16s ease;
+}
+
+.launcher-item:hover {
+  background: var(--purple-100);
+  border-color: var(--purple-200);
+}
+
+.launcher-item.active {
+  background: var(--purple-100);
+  border-color: var(--purple-400);
+}
+
+.launcher-item-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--gradient-soft);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(95, 16, 210, 0.25);
+}
+
+.launcher-item-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.launcher-item-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.launcher-empty {
+  margin: 6px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ============ Menú de perfil ============ */
+.profile {
+  position: relative;
+}
+
+button.user-chip {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+  padding: 5px 12px 5px 6px;
+  border-radius: 999px;
+  transition: all 0.18s ease;
+}
+
+button.user-chip:hover {
+  border-color: var(--purple-400);
+}
+
+button.user-chip.open {
+  border-color: var(--purple-400);
+  box-shadow: 0 6px 16px rgba(95, 16, 210, 0.18);
+}
+
+.user-chip-text {
+  line-height: 1.2;
+}
+
+.profile-caret {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.profile-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 262px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 8px;
+  z-index: 40;
+  animation: menu-in 0.16s ease;
+}
+
+.profile-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 8px 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-menu-head strong {
+  display: block;
+  font-size: 13px;
+}
+
+.profile-menu-head small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.user-avatar.lg {
+  width: 42px;
+  height: 42px;
+  font-size: 15px;
+}
+
+.role-badge {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--purple-100);
+  color: var(--purple-600);
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.14s ease;
+}
+
+.profile-menu-item:hover {
+  background: var(--purple-100);
+  color: var(--purple-600);
+}
+
+.profile-menu-item.danger:hover {
+  background: rgba(224, 68, 124, 0.12);
+  color: var(--danger);
+}
+
+.profile-menu-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 4px;
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ============ Breadcrumb & chips ============ */
 .breadcrumb {
   display: flex;

@@ -6,6 +6,7 @@ import { ProductTable } from '../components/ProductTable';
 import { StatsBar } from '../components/StatsBar';
 import { CartSidebar } from '../components/CartSidebar';
 import { ExportModal } from '../components/ExportModal';
+import { AppFooter } from '../components/AppFooter';
 
 interface CatalogPageProps {
   onOpenAdmin?: () => void;
@@ -133,7 +134,7 @@ export function CatalogPage({ onOpenAdmin, onOpenQuotes, onOpenIntegrations }: C
         <CartSidebar onExport={() => setExportOpen(true)} />
       </div>
 
-      <footer className="app-footer">SmartBid © 2026 | Enterprise Marketplace Solution</footer>
+      <AppFooter />
 
       {exportOpen && (
         <ExportModal onClose={() => setExportOpen(false)} onSuccess={handleQuotationCreated} />

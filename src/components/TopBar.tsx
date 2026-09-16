@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { CategoryDto } from '../types/api';
 import { useAuth } from '../context/AuthContext';
+import { Brand } from './Brand';
 
 const ICONS: Record<string, typeof Server> = {
   server: Server,
@@ -92,7 +93,7 @@ export function TopBar({
 
   return (
     <header className="topbar">
-      <span className="brand">SmartBid</span>
+      <Brand />
 
       <div className="launcher" ref={launcherRef}>
         <button

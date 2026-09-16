@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, FileText, FileDown, LogOut, X, RefreshCw, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { Brand } from '../components/Brand';
+import { AppFooter } from '../components/AppFooter';
 import { quotationsApi } from '../api/services';
 import { QUOTATION_STATUSES } from '../types/api';
 import type { QuotationDto, QuotationListItemDto } from '../types/api';
@@ -143,7 +145,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <span className="brand">SmartBid</span>
+        <Brand />
         <span className="families-label">MIS COTIZACIONES</span>
         <div className="family-tabs" />
         <button className="family-tab" onClick={onBack}>
@@ -260,7 +262,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
         </div>
       </div>
 
-      <footer className="app-footer">SmartBid © 2026 | Enterprise Marketplace Solution</footer>
+      <AppFooter />
 
       {/* --- Detalle de cotización --- */}
       {detail && (

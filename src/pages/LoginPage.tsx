@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { ApiError, BASE_URL } from '../api/http';
+import { Brand } from '../components/Brand';
 import { isO365Configured } from '../auth/msal';
 
 export function LoginPage() {
@@ -75,7 +76,7 @@ export function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-hero">
-          <h1>SmartBid</h1>
+          <Brand variant="login" />
           <p>Enterprise Marketplace Solution — Portal de Cotizaciones</p>
         </div>
         <form className="login-form" onSubmit={handleSubmit}>

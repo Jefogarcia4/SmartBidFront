@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Package, FolderTree, TrendingUp, Building2, ArrowLeft, ShieldAlert, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { Brand } from '../../components/Brand';
+import { AppFooter } from '../../components/AppFooter';
 import { ProductsAdmin } from './ProductsAdmin';
 import { CategoriesAdmin } from './CategoriesAdmin';
 import { TrmAdmin } from './TrmAdmin';
@@ -63,7 +65,7 @@ export function AdminPage({ onBack }: AdminPageProps) {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <span className="brand">SmartBid</span>
+        <Brand />
         <span className="families-label">ADMINISTRACIÓN:</span>
         <nav className="family-tabs">
           {TABS.map((t) => {
@@ -102,7 +104,7 @@ export function AdminPage({ onBack }: AdminPageProps) {
         {tab === 'clients' && <ClientsAdmin notify={notify} />}
       </div>
 
-      <footer className="app-footer">SmartBid © 2026 | Enterprise Marketplace Solution</footer>
+      <AppFooter />
 
       {toast && <div className={`toast ${toast.error ? 'error' : ''}`}>{toast.text}</div>}
     </div>

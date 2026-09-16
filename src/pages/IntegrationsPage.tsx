@@ -12,6 +12,8 @@ import {
   Users,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { Brand } from '../components/Brand';
+import { AppFooter } from '../components/AppFooter';
 import { apiKeysApi } from '../api/services';
 import { BASE_URL } from '../api/http';
 import type { ApiKeyAdminDto, ApiKeyDto, IssuedApiKeyDto, UserOptionDto } from '../types/api';
@@ -110,7 +112,7 @@ export function IntegrationsPage({ onBack }: IntegrationsPageProps) {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <span className="brand">SmartBid</span>
+        <Brand />
         <span className="families-label">INTEGRACIONES:</span>
         <nav className="family-tabs">
           <button
@@ -164,7 +166,7 @@ export function IntegrationsPage({ onBack }: IntegrationsPageProps) {
         )}
       </div>
 
-      <footer className="app-footer">SmartBid © 2026 | Enterprise Marketplace Solution</footer>
+      <AppFooter />
 
       {issued && <IssuedKeyModal issued={issued} onClose={() => setIssued(null)} />}
       {toast && <div className={`toast ${toast.error ? 'error' : ''}`}>{toast.text}</div>}

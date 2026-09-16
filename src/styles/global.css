@@ -107,6 +107,17 @@ textarea {
   letter-spacing: 0.3px;
 }
 
+/* Logo de la marca. `height` manda y el ancho sale solo, así un PNG apaisado o
+   cuadrado entran igual sin deformarse ni empujar el resto del header. */
+.brand-logo {
+  height: 32px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
 .families-label {
   font-size: 12px;
   font-weight: 700;
@@ -1111,6 +1122,14 @@ button.user-chip.open {
   background: var(--gradient-soft);
   color: #fff;
   padding: 30px 28px;
+}
+
+/* En el login va Logo_2, con el texto en blanco: se apoya directo sobre el degradado,
+   sin placa de fondo. */
+.login-hero .brand-logo {
+  height: 44px;
+  max-width: 260px;
+  margin-bottom: 14px;
 }
 
 .login-hero h1 {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, Copy, ExternalLink, Sparkles, X } from 'lucide-react';
+import { Check, Copy, ExternalLink, RefreshCw, Sparkles, X } from 'lucide-react';
 
 /**
  * Base del chat agéntico de FlexGPT. Configurable para apuntar a otro modelo o instancia.
@@ -76,6 +76,17 @@ interface SowChatModalProps {
  */
 export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatModalProps) {
   const [copied, setCopied] = useState(false);
+
+  /**
+   * Remontar el iframe lo obliga a pedir la página de nuevo. Sirve después de tocar la
+   * configuración en FlexGPT —conectar el tool server, cambiar el filtro de funciones— para no
+   * tener que cerrar y reabrir el modal.
+   *
+   * Ojo: NO arregla la sesión. Si la cookie de FlexGPT no entra al iframe (SameSite=Lax), acá
+   * nunca vas a estar logueado, y recargar mil veces da lo mismo — eso se resuelve del lado de
+   * ellos con WEBUI_SESSION_COOKIE_SAME_SITE=none.
+   */
+  const [reloadKey, setReloadKey] = useState(0);
   const chatUrl = useMemo(() => buildSowChatUrl(quotationNumber), [quotationNumber]);
 
   const copyNumber = async () => {
@@ -113,6 +124,13 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
             </button>
             <button
               className="sow-chat-btn"
+              title="Recargar el chat (útil tras cambiar la configuración en FlexGPT)"
+              onClick={() => setReloadKey((k) => k + 1)}
+            >
+              <RefreshCw size={15} /> Recargar
+            </button>
+            <button
+              className="sow-chat-btn"
               title="Abrir en una ventana propia (mantiene tu sesión de FlexGPT)"
               onClick={() => openSowChatWindow(quotationNumber)}
             >
@@ -125,6 +143,7 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
         </header>
 
         <iframe
+          key={reloadKey}
           className="sow-chat-frame"
           src={chatUrl}
           title={`Generador de SOW · ${quotationNumber}`}

@@ -23,33 +23,23 @@ const CHAT_URL =
 export const sowChatEmbedded = import.meta.env.VITE_FLEXGPT_EMBED !== 'false';
 
 /**
- * Instrucción con la que arranca el chat.
+ * Instrucción con la que arranca el chat: corta y en el mismo formato con el que los comerciales
+ * ya le hablan al agente.
  *
- * Nombra las herramientas del MCP de forma explícita y descarta otras fuentes: el agente tiene
- * además una base de conocimiento en Excel y, si no se le indica, busca ahí primero y responde
- * que no encuentra la cotización.
- *
- * El último paso se pide aparte y en imperativo porque el modelo daba por terminada la tarea al
- * escribir el SOW en el chat: redactaba las nueve secciones y no llamaba `generar_sow`, así que
- * el comercial se quedaba con el texto y sin el .docx. El entregable es el archivo, no el texto.
+ * Antes iba un párrafo largo nombrando cada herramienta del MCP y el orden en que llamarlas. El
+ * agente no reaccionaba a ese texto y sí a un simple "genera el SOW para COT-...", así que todo
+ * ese instructivo se movió al **system prompt** del agente en FlexGPT
+ * (`FLEXGPT-SYSTEM-PROMPT.md` en el repo del API), que es donde manda de verdad y no compite con
+ * el mensaje del usuario.
  */
-function buildPrompt(numero: string, cliente?: string): string {
-  return (
-    `Usá la herramienta obtener_cotizacion del MCP de SmartBid para leer la cotización ${numero}` +
-    `${cliente ? ` del cliente ${cliente}` : ''} y con esos datos redactá el SOW. ` +
-    'Las cotizaciones están únicamente en SmartBid: no busques en archivos, hojas de cálculo ' +
-    'ni otras fuentes. Los precios, cantidades y totales tomalos tal cual vienen de la herramienta. ' +
-    'Consultá obtener_plantilla_sow para saber qué secciones redactar. ' +
-    'Cuando termines de redactarlas, llamá obligatoriamente a generar_sow con esos textos y ' +
-    'pasame el enlace de descarga que devuelve: el entregable es el documento Word, no el texto ' +
-    'del chat, y sin esa llamada no existe ningún archivo que yo pueda descargar.'
-  );
+function buildPrompt(numero: string): string {
+  return `Genera el SOW para ${numero}`;
 }
 
 /** URL completa del chat: modelo + instrucción inicial. */
-export function buildSowChatUrl(numero: string, cliente?: string): string {
+export function buildSowChatUrl(numero: string): string {
   const url = new URL(CHAT_URL);
-  url.searchParams.set('q', buildPrompt(numero, cliente));
+  url.searchParams.set('q', buildPrompt(numero));
   return url.toString();
 }
 
@@ -57,14 +47,14 @@ export function buildSowChatUrl(numero: string, cliente?: string): string {
  * Abre el chat en una ventana propia. Devuelve false si el navegador bloqueó el emergente,
  * para que la pantalla que lo llama avise en vez de quedarse en silencio.
  */
-export function openSowChatWindow(numero: string, cliente?: string): boolean {
+export function openSowChatWindow(numero: string): boolean {
   const width = Math.min(1180, Math.round(window.screen.availWidth * 0.9));
   const height = Math.min(880, Math.round(window.screen.availHeight * 0.9));
   const left = Math.round((window.screen.availWidth - width) / 2);
   const top = Math.round((window.screen.availHeight - height) / 2);
 
   const win = window.open(
-    buildSowChatUrl(numero, cliente),
+    buildSowChatUrl(numero),
     `smartbid-sow-${numero}`,
     `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
   );
@@ -86,10 +76,7 @@ interface SowChatModalProps {
  */
 export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatModalProps) {
   const [copied, setCopied] = useState(false);
-  const chatUrl = useMemo(
-    () => buildSowChatUrl(quotationNumber, clientName),
-    [quotationNumber, clientName],
-  );
+  const chatUrl = useMemo(() => buildSowChatUrl(quotationNumber), [quotationNumber]);
 
   const copyNumber = async () => {
     try {
@@ -127,7 +114,7 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
             <button
               className="sow-chat-btn"
               title="Abrir en una ventana propia (mantiene tu sesión de FlexGPT)"
-              onClick={() => openSowChatWindow(quotationNumber, clientName)}
+              onClick={() => openSowChatWindow(quotationNumber)}
             >
               <ExternalLink size={15} /> Abrir aparte
             </button>

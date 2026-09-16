@@ -52,7 +52,7 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
       setSowChat({ number, clientName });
       return;
     }
-    if (!openSowChatWindow(number, clientName)) {
+    if (!openSowChatWindow(number)) {
       notify('El navegador bloqueó la ventana del asistente. Permití las ventanas emergentes de este sitio.', true);
     }
   }

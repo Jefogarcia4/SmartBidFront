@@ -96,6 +96,40 @@
   border-radius: 9px;
 }
 
+/* Barra con el mensaje a pegar. El chat abre limpio a propósito (ver buildSowChatUrl), así que
+   el texto tiene que estar a la vista: si el navegador rechazó el copiado automático, el
+   comercial igual puede seleccionarlo a mano. */
+.sow-chat-hint {
+  margin: 0;
+  padding: 9px 14px;
+  background: var(--purple-100);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.sow-chat-hint code {
+  font-family: 'Consolas', 'Menlo', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--purple-600);
+  background: var(--surface);
+  border: 1px solid var(--purple-200);
+  border-radius: 6px;
+  padding: 3px 9px;
+  user-select: all;
+}
+
+.sow-chat-hint span {
+  font-size: 11.5px;
+  opacity: 0.8;
+}
+
 /* El iframe ocupa todo lo que sobra: el chat necesita alto para ser usable */
 .sow-chat-frame {
   flex: 1;

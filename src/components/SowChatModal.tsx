@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Check, Copy, ExternalLink, RefreshCw, Sparkles, X } from 'lucide-react';
 
 /**
@@ -23,24 +23,28 @@ const CHAT_URL =
 export const sowChatEmbedded = import.meta.env.VITE_FLEXGPT_EMBED !== 'false';
 
 /**
- * Instrucción con la que arranca el chat: corta y en el mismo formato con el que los comerciales
- * ya le hablan al agente.
- *
- * Antes iba un párrafo largo nombrando cada herramienta del MCP y el orden en que llamarlas. El
- * agente no reaccionaba a ese texto y sí a un simple "genera el SOW para COT-...", así que todo
- * ese instructivo se movió al **system prompt** del agente en FlexGPT
- * (`FLEXGPT-SYSTEM-PROMPT.md` en el repo del API), que es donde manda de verdad y no compite con
- * el mensaje del usuario.
+ * Mensaje con el que el comercial arranca el chat. Corto y en el mismo formato con el que ya le
+ * hablan al agente; todo el instructivo vive en el **system prompt** del agente en FlexGPT
+ * (`FLEXGPT-SYSTEM-PROMPT.md` en el repo del API), que es donde manda de verdad.
  */
-function buildPrompt(numero: string): string {
+export function sowChatMessage(numero: string): string {
   return `Genera el SOW para ${numero}`;
 }
 
-/** URL completa del chat: modelo + instrucción inicial. */
-export function buildSowChatUrl(numero: string): string {
-  const url = new URL(CHAT_URL);
-  url.searchParams.set('q', buildPrompt(numero));
-  return url.toString();
+/**
+ * URL del chat: solo el modelo. **No lleva el parámetro `q` a propósito.**
+ *
+ * `q` es el único parámetro de Open WebUI que rellena el mensaje, y según su documentación lo
+ * *envía solo* apenas carga la página. Ese autoenvío llegaba antes de que Open WebUI terminara
+ * de registrar el tool server de SmartBID, así que el modelo respondía sin las herramientas del
+ * MCP: decía no encontrar la cotización aunque estuviera todo bien configurado.
+ *
+ * No hay parámetro que rellene sin enviar, y escribir en la caja desde acá tampoco se puede: el
+ * iframe es de otro dominio. Por eso el chat abre limpio y el mensaje se deja en el portapapeles
+ * — para cuando el comercial lo pega, las herramientas ya están cargadas.
+ */
+export function buildSowChatUrl(): string {
+  return CHAT_URL;
 }
 
 /**
@@ -54,7 +58,7 @@ export function openSowChatWindow(numero: string): boolean {
   const top = Math.round((window.screen.availHeight - height) / 2);
 
   const win = window.open(
-    buildSowChatUrl(numero),
+    buildSowChatUrl(),
     `smartbid-sow-${numero}`,
     `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
   );
@@ -87,17 +91,26 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
    * ellos con WEBUI_SESSION_COOKIE_SAME_SITE=none.
    */
   const [reloadKey, setReloadKey] = useState(0);
-  const chatUrl = useMemo(() => buildSowChatUrl(quotationNumber), [quotationNumber]);
+  const chatUrl = buildSowChatUrl();
 
-  const copyNumber = async () => {
+  const message = useMemo(() => sowChatMessage(quotationNumber), [quotationNumber]);
+
+  const copyMessage = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(quotationNumber);
+      await navigator.clipboard.writeText(message);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      return true;
     } catch {
-      /* sin portapapeles: el número está visible para copiarlo a mano */
+      return false; // sin permiso de portapapeles: el texto está a la vista para copiarlo a mano
     }
-  };
+  }, [message]);
+
+  // Intento al abrir, para que el comercial solo tenga que pegar. Si el navegador lo rechaza
+  // por falta de interacción, queda el botón — por eso el texto también se muestra.
+  useEffect(() => {
+    void copyMessage();
+  }, [copyMessage]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -116,11 +129,11 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
           <div className="sow-chat-actions">
             <button
               className="sow-chat-btn"
-              title="Copiar el número de la cotización"
-              onClick={() => void copyNumber()}
+              title="Copiar el mensaje para pegarlo en el chat"
+              onClick={() => void copyMessage()}
             >
               {copied ? <Check size={15} /> : <Copy size={15} />}
-              {copied ? 'Copiado' : 'Copiar N°'}
+              {copied ? 'Copiado' : 'Copiar mensaje'}
             </button>
             <button
               className="sow-chat-btn"
@@ -141,6 +154,11 @@ export function SowChatModal({ quotationNumber, clientName, onClose }: SowChatMo
             </button>
           </div>
         </header>
+
+        <p className="sow-chat-hint">
+          Pegá este mensaje en el chat y enviá:<code>{message}</code>
+          <span>{copied ? 'Ya lo copiamos al portapapeles.' : 'Usá "Copiar mensaje".'}</span>
+        </p>
 
         <iframe
           key={reloadKey}

@@ -86,9 +86,11 @@ interface ProductTableProps {
   products: ProductDto[];
   loading: boolean;
   hasSelection: boolean;
+  /** Texto buscado, si la tabla está mostrando resultados de búsqueda global. */
+  searchTerm?: string;
 }
 
-export function ProductTable({ products, loading, hasSelection }: ProductTableProps) {
+export function ProductTable({ products, loading, hasSelection, searchTerm }: ProductTableProps) {
   const { getQuantity, setBaseQuantity } = useCart();
   const { useTrmPricing } = useSettings();
   const [sheetProduct, setSheetProduct] = useState<ProductDto | null>(null);
@@ -109,7 +111,7 @@ export function ProductTable({ products, loading, hasSelection }: ProductTablePr
           <div className="icon">
             <PackageOpen size={36} />
           </div>
-          Selecciona una categoría para ver los productos
+          Elegí una categoría o buscá un paquete por código, nombre o plataforma
         </div>
       </div>
     );
@@ -122,7 +124,9 @@ export function ProductTable({ products, loading, hasSelection }: ProductTablePr
           <div className="icon">
             <PackageOpen size={36} />
           </div>
-          No hay productos activos en esta subcategoría
+          {searchTerm
+            ? `No se encontraron paquetes para «${searchTerm}»`
+            : 'No hay productos activos en esta subcategoría'}
         </div>
       </div>
     );
@@ -136,7 +140,6 @@ export function ProductTable({ products, loading, hasSelection }: ProductTablePr
             <th>ID</th>
             <th>Paquete</th>
             <th>Objetivo y alcance</th>
-            <th style={{ textAlign: 'right' }}>Horas</th>
             <th style={{ textAlign: 'center' }}>Cantidad</th>
             <th style={{ textAlign: 'right' }}>Costo</th>
           </tr>
@@ -185,13 +188,6 @@ export function ProductTable({ products, loading, hasSelection }: ProductTablePr
                         </button>
                       )}
                   </div>
-                </td>
-                <td className="cell-hours">
-                  {p.estimatedHours == null ? (
-                    <span className="muted">—</span>
-                  ) : (
-                    <span className="hours-total">{p.estimatedHours} h</span>
-                  )}
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <Stepper

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Package, PackageOpen, Puzzle, Eye, X, Clock } from 'lucide-react';
+import { Package, PackageOpen, Puzzle, Eye, X } from 'lucide-react';
 import type { ProductDto } from '../types/api';
 import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
@@ -42,11 +42,6 @@ function PackageSheetModal({ product, onClose }: { product: ProductDto; onClose:
             <span className="muted">
               {product.categoryName} › {product.subcategoryName}
             </span>
-            {product.estimatedHours != null && (
-              <span className="sheet-hours">
-                <Clock size={12} /> {product.estimatedHours} h
-              </span>
-            )}
           </div>
 
           {chips.length > 0 && (
@@ -63,19 +58,6 @@ function PackageSheetModal({ product, onClose }: { product: ProductDto; onClose:
           <SheetBlock title="Alcance" text={product.scope} />
           <SheetBlock title="Prerrequisitos" text={product.prerequisites} />
           <SheetBlock title="No incluido" text={product.exclusions} />
-
-          {product.roleHours.length > 0 && (
-            <div className="sheet-block">
-              <div className="sheet-block-title">Esfuerzo estimado</div>
-              <div className="role-hours-readout">
-                {product.roleHours.map((h) => (
-                  <span key={h.deliveryRoleId}>
-                    <strong>{h.hours} h</strong> {h.roleName}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

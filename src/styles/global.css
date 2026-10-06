@@ -754,14 +754,6 @@ button.user-chip.open {
   font-size: 12.5px;
 }
 
-.sheet-hours {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
-  color: var(--purple-600);
-}
-
 .sheet-block {
   display: flex;
   flex-direction: column;
@@ -828,14 +820,6 @@ button.user-chip.open {
 
 .role-hours-cell input:focus {
   border-color: var(--purple-400);
-}
-
-.role-hours-readout {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--text-muted);
 }
 
 .field-hint {

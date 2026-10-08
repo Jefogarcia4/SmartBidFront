@@ -53,6 +53,32 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return (await res.json()) as T;
 }
 
+/**
+ * Envío multipart (carga masiva del catálogo).
+ *
+ * No se fija Content-Type a propósito: lo pone el navegador con el `boundary` que generó, y
+ * escribirlo a mano rompe el parseo del lado del servidor.
+ */
+async function requestForm<T>(path: string, form: FormData): Promise<T> {
+  const headers = new Headers();
+  const token = tokenStore.get();
+  if (token) headers.set('Authorization', token);
+
+  const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', body: form, headers });
+
+  if (!res.ok) {
+    let message = `Error ${res.status}`;
+    try {
+      const body = await res.json();
+      message = body?.mensaje ?? body?.message ?? body?.title ?? message;
+    } catch {
+      /* respuesta sin cuerpo JSON */
+    }
+    throw new ApiError(res.status, message);
+  }
+  return (await res.json()) as T;
+}
+
 /** Descarga binaria (ej. documentos Word) con el mismo esquema de autenticación. */
 async function requestBlob(path: string): Promise<Blob> {
   const headers = new Headers();
@@ -66,6 +92,7 @@ async function requestBlob(path: string): Promise<Blob> {
 export const http = {
   get: <T>(path: string) => request<T>(path),
   blob: (path: string) => requestBlob(path),
+  form: <T>(path: string, form: FormData) => requestForm<T>(path, form),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'POST', body: body != null ? JSON.stringify(body) : undefined }),
   put: <T>(path: string, body?: unknown) =>

@@ -30,6 +30,9 @@ import type {
   UpdateClientDto,
   UpdateProductDto,
   UpdateSubcategoryDto,
+  CatalogImportOptions,
+  CatalogImportPreview,
+  CatalogImportResult,
 } from '../types/api';
 
 export const authApi = {
@@ -190,3 +193,31 @@ export const quotationsApi = {
   /** Documento Word de la cotización (textos redactados con FlexGPT en el backend). */
   generateDocument: (id: number) => http.blob(`/api/quotations/${id}/document`),
 };
+
+/**
+ * Carga masiva del catálogo. El archivo viaja en las DOS llamadas en vez de quedar guardado en
+ * el servidor: así `aplicar` valida contra exactamente lo que va a cargar, y no hay estado
+ * temporal que pueda vencerse entre la vista previa y la confirmación.
+ */
+export const catalogImportApi = {
+  hojas: (archivo: File) => {
+    const fd = new FormData();
+    fd.append('archivo', archivo);
+    return http.form<string[]>('/api/catalog/import/sheets', fd);
+  },
+
+  previa: (archivo: File, opciones: CatalogImportOptions) =>
+    http.form<CatalogImportPreview>('/api/catalog/import/preview', cuerpo(archivo, opciones)),
+
+  aplicar: (archivo: File, opciones: CatalogImportOptions) =>
+    http.form<CatalogImportResult>('/api/catalog/import/apply', cuerpo(archivo, opciones)),
+};
+
+function cuerpo(archivo: File, opciones: CatalogImportOptions): FormData {
+  const fd = new FormData();
+  fd.append('archivo', archivo);
+  // Las opciones van como JSON: llevan un diccionario adentro (el mapa de soluciones) y eso no
+  // entra bien en campos sueltos de formulario.
+  fd.append('opciones', JSON.stringify(opciones));
+  return fd;
+}

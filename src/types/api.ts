@@ -323,3 +323,75 @@ export interface UserOptionDto {
   isActive: boolean;
 }
 
+
+/* ============ Carga masiva del catálogo ============ */
+
+/** Cómo inferir de qué paquete base cuelga cada add-on. La plantilla no trae esa matriz. */
+export const ADDON_STRATEGIES = [
+  { id: 'subcategoria-o-linea', label: 'Subcategoría, y si no tiene base, toda la línea' },
+  { id: 'subcategoria', label: 'Solo la misma subcategoría' },
+  { id: 'linea', label: 'Toda la línea de producto (prefijo del código)' },
+  { id: 'grupo-id', label: 'Grupo del id de la plantilla (S2.2 → S2.1)' },
+] as const;
+
+export interface CatalogImportOptions {
+  sheet?: string | null;
+  prefix?: string | null;
+  addOnStrategy: string;
+  createMissingTypes: boolean;
+  /** Resolución de las "Solución" que la plantilla deja sin decidir. */
+  solutionMap?: Record<string, string>;
+}
+
+export interface CatalogImportIssue {
+  /** true = impide aplicar; false = solo advierte. */
+  blocking: boolean;
+  message: string;
+  detail?: string | null;
+}
+
+export interface CatalogImportAmbiguity {
+  value: string;
+  options: string[];
+  rows: number;
+}
+
+export interface CatalogImportRow {
+  code: string;
+  name: string;
+  packageType: string | null;
+  category: string;
+  subcategory: string;
+  priceCOP: number;
+  isAddOn: boolean;
+  estimatedHours: number | null;
+}
+
+export interface CatalogImportPreview {
+  fileName: string;
+  sheet: string;
+  availableSheets: string[];
+  packages: number;
+  addOns: number;
+  totalCOP: number;
+  toUpdate: number;
+  toInsert: number;
+  toRemove: number;
+  newCategories: string[];
+  newSubcategories: string[];
+  newPackageTypes: string[];
+  ambiguities: CatalogImportAmbiguity[];
+  issues: CatalogImportIssue[];
+  sample: CatalogImportRow[];
+  canApply: boolean;
+}
+
+export interface CatalogImportResult {
+  inserted: number;
+  updated: number;
+  removed: number;
+  deactivated: number;
+  addOnLinks: number;
+  roleHours: number;
+  totalCOP: number;
+}

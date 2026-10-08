@@ -4,6 +4,7 @@ import { clientsApi, quotationsApi } from '../api/services';
 import type { ClientDto, QuotationDto } from '../types/api';
 import { useCart } from '../context/CartContext';
 import { money } from '../utils/format';
+import { descargarWordEstandar } from '../utils/download';
 
 interface ExportModalProps {
   onClose: () => void;
@@ -19,6 +20,7 @@ export function ExportModal({ onClose, onSuccess }: ExportModalProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<QuotationDto | null>(null);
+  const [descargando, setDescargando] = useState(false);
 
   useEffect(() => {
     clientsApi
@@ -53,6 +55,13 @@ export function ExportModal({ onClose, onSuccess }: ExportModalProps) {
       setCreated(latest);
       clear();
       onSuccess(latest);
+
+      // El Word estándar se descarga solo: cerrar la cotización y bajar el borrador son el
+      // mismo gesto para el comercial. Si el navegador lo bloquea, queda el botón del detalle.
+      setDescargando(true);
+      const ok = await descargarWordEstandar(latest.quotationId, latest.number);
+      setDescargando(false);
+      if (!ok) setError('La cotización se creó, pero no se pudo descargar el Word. Bajalo desde Mis Cotizaciones.');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error creando la cotización');
     } finally {
@@ -82,7 +91,11 @@ export function ExportModal({ onClose, onSuccess }: ExportModalProps) {
               </p>
               <p style={{ marginTop: 8 }}>
                 Total: <strong>{money(created.totalCOP)}</strong>
-                {created.totalUSD != null && <> · USD {money(created.totalUSD)}</>}
+              </p>
+              <p className="muted" style={{ marginTop: 10, fontSize: 12 }}>
+                {descargando
+                  ? 'Descargando el Word (Borrador)…'
+                  : 'Se descargó el Word estándar (Borrador). Podés volver a bajarlo desde Mis Cotizaciones.'}
               </p>
             </div>
           </div>

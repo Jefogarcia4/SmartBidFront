@@ -1805,3 +1805,277 @@ button.user-chip.open {
   gap: 10px;
   background: #faf9ff;
 }
+
+/* ============ Carga masiva del catálogo ============ */
+.import-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* La zona de archivo es un <label> para que el clic en cualquier parte abra el selector
+   sin tener que cablear el input a mano. */
+.dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 26px 20px;
+  border: 2px dashed var(--purple-200);
+  border-radius: var(--radius);
+  background: var(--purple-100);
+  color: var(--purple-600);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.dropzone:hover {
+  border-color: var(--purple-400);
+}
+
+.dropzone.con-archivo {
+  border-style: solid;
+  background: var(--surface);
+}
+
+.dropzone input[type='file'] {
+  display: none;
+}
+
+.dropzone strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.dropzone small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.import-opts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.import-opts > label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.import-opts > label.ancho {
+  grid-column: 1 / -1;
+}
+
+.import-opts input,
+.import-opts select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.import-opts input:focus,
+.import-opts select:focus {
+  outline: none;
+  border-color: var(--purple-400);
+}
+
+.import-opts small {
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.import-opts label.check {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.import-acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.import-acciones.final {
+  margin-top: 16px;
+}
+
+/* Las cifras del diagnóstico: lo primero que se mira antes de confirmar. */
+.import-cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+
+.import-cifras > div {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 13px;
+}
+
+.import-cifras b {
+  display: block;
+  font-size: 19px;
+  color: var(--text);
+}
+
+.import-cifras span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.import-cifras .ok b {
+  color: var(--purple-600);
+}
+
+.import-cifras .warn {
+  border-color: #f0c674;
+  background: #fdf6e7;
+}
+
+.import-cifras .total {
+  background: var(--purple-100);
+  border-color: var(--purple-200);
+}
+
+.import-cifras .total b {
+  color: var(--purple-600);
+  font-size: 16px;
+}
+
+.import-nuevos {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 10px 0 0;
+}
+
+.import-nuevos p {
+  margin: 3px 0;
+}
+
+.import-nuevos strong {
+  color: var(--text);
+}
+
+/* Un problema que impide cargar se ve distinto de uno que solo avisa: la diferencia entre
+   "arreglá el Excel" y "seguí, pero sabelo". */
+.import-issue {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-top: 9px;
+}
+
+.import-issue small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  opacity: 0.85;
+}
+
+.import-issue.bloquea {
+  background: rgba(224, 68, 124, 0.09);
+  border: 1px solid rgba(224, 68, 124, 0.3);
+  color: var(--danger);
+}
+
+.import-issue.aviso {
+  background: #fdf6e7;
+  border: 1px solid #f0c674;
+  color: #8a6400;
+}
+
+.import-ambiguas {
+  margin-top: 14px;
+  padding: 13px;
+  border: 1px solid #f0c674;
+  background: #fdf6e7;
+  border-radius: var(--radius-sm);
+}
+
+.import-ambiguas-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8a6400;
+  margin-bottom: 10px;
+}
+
+.import-ambigua {
+  display: grid;
+  grid-template-columns: 1fr auto minmax(230px, auto);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.import-ambigua code {
+  font-size: 11.5px;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 6px 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.import-ambigua small {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.import-ambigua select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 9px;
+  font-size: 12.5px;
+  background: var(--surface);
+}
+
+.import-sub {
+  margin: 18px 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@media (max-width: 760px) {
+  .import-ambigua {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}

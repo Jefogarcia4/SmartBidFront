@@ -9,6 +9,7 @@ import type { QuotationDto, QuotationListItemDto } from '../types/api';
 import { Pagination, usePagination } from '../components/Pagination';
 import { SowChatModal, openSowChatWindow, sowChatEmbedded } from '../components/SowChatModal';
 import { money } from '../utils/format';
+import { descargarWordEstandar } from '../utils/download';
 
 const STATUS_CLASS: Record<string, string> = {
   Borrador: 'draft',
@@ -119,20 +120,9 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
   async function generateDocument() {
     if (!detail) return;
     setDocLoading(true);
-    try {
-      const blob = await quotationsApi.generateDocument(detail.quotationId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Cotizacion_${detail.number}.docx`;
-      a.click();
-      URL.revokeObjectURL(url);
-      notify('Documento Word generado');
-    } catch (err) {
-      notify(err instanceof Error ? err.message : 'Error generando el documento', true);
-    } finally {
-      setDocLoading(false);
-    }
+    const ok = await descargarWordEstandar(detail.quotationId, detail.number);
+    setDocLoading(false);
+    notify(ok ? 'Documento Word generado' : 'Error generando el documento', !ok);
   }
 
   const initials = (user?.fullName ?? '?')
@@ -209,7 +199,6 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                   <th>Estado</th>
                   <th style={{ textAlign: 'right' }}>Desc. %</th>
                   <th style={{ textAlign: 'right' }}>Total COP</th>
-                  <th style={{ textAlign: 'right' }}>Total USD</th>
                   <th>Creada</th>
                   <th>Válida hasta</th>
                   <th style={{ textAlign: 'center' }}>SOW</th>
@@ -232,11 +221,6 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                     <td style={{ textAlign: 'right' }}>{q.discountPercent}%</td>
                     <td className="cell-cost">
                       <span className="cost-total">{money(q.totalCOP)}</span>
-                    </td>
-                    <td className="cell-cost">
-                      <span className="cost-unit">
-                        {q.totalUSD != null ? money(q.totalUSD) : '—'}
-                      </span>
                     </td>
                     <td className="muted">{q.creationDate}</td>
                     <td className="muted">{q.validityDate}</td>
@@ -323,9 +307,6 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                 </span>
                 <strong>
                   {money(detail.totalCOP)}
-                  {detail.totalUSD != null && (
-                    <span className="muted"> · USD {money(detail.totalUSD)}</span>
-                  )}
                 </strong>
               </div>
 
@@ -340,12 +321,12 @@ export function QuotationsPage({ onBack }: QuotationsPageProps) {
                   <Sparkles size={14} /> Generar SOW con IA
                 </button>
                 <button className="btn-secondary" disabled={docLoading} onClick={() => void generateDocument()}>
-                  <FileDown size={14} /> {docLoading ? 'Generando…' : 'Word estándar'}
+                  <FileDown size={14} /> {docLoading ? 'Generando…' : 'Word estándar (Borrador)'}
                 </button>
               </div>
               <span className="muted" style={{ fontSize: 12 }}>
                 Con IA: el asistente lee la cotización por el MCP y redacta el alcance conversando
-                con vos. Word estándar: descarga directa con la plantilla del sistema.
+                con vos. Word estándar (Borrador): descarga directa con la plantilla del sistema.
               </span>
 
               <div className="panel-title" style={{ padding: '4px 0 0' }}>

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Package, PackageOpen, Puzzle, Eye, X } from 'lucide-react';
 import type { ProductDto } from '../types/api';
 import { useCart } from '../context/CartContext';
-import { useSettings } from '../context/SettingsContext';
 import { Stepper } from './Stepper';
 import { Pagination, usePagination } from './Pagination';
 import { money, platformChips } from '../utils/format';
@@ -74,7 +73,6 @@ interface ProductTableProps {
 
 export function ProductTable({ products, loading, hasSelection, searchTerm }: ProductTableProps) {
   const { getQuantity, setBaseQuantity } = useCart();
-  const { useTrmPricing } = useSettings();
   const [sheetProduct, setSheetProduct] = useState<ProductDto | null>(null);
   const pager = usePagination(products, 8);
 
@@ -180,11 +178,10 @@ export function ProductTable({ products, loading, hasSelection, searchTerm }: Pr
                 </td>
                 <td className="cell-cost">
                   <div className="cost-total">{money(p.priceCOP * Math.max(qty, 0))}</div>
-                  <div className="cost-unit">
-                    {useTrmPricing
-                      ? `USD ${money(p.priceUSD)} · COP ${money(p.priceCOP)} c/u`
-                      : `${money(p.priceCOP)} c/u`}
-                  </div>
+                  {/* Siempre en COP: el USD es insumo del modo TRM, no información para el
+                      comercial. Si el modo está activo, el COP que se muestra ya salió de
+                      USD × TRM, así que el dato no se pierde. */}
+                  <div className="cost-unit">{money(p.priceCOP)} c/u</div>
                 </td>
               </tr>
             );

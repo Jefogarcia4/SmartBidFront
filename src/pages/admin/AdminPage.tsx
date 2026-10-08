@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Package, FolderTree, TrendingUp, Building2, ArrowLeft, ShieldAlert, LogOut } from 'lucide-react';
+import { Package, FolderTree, TrendingUp, Building2, Upload, ArrowLeft, ShieldAlert, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Brand } from '../../components/Brand';
 import { AppFooter } from '../../components/AppFooter';
@@ -7,14 +7,16 @@ import { ProductsAdmin } from './ProductsAdmin';
 import { CategoriesAdmin } from './CategoriesAdmin';
 import { TrmAdmin } from './TrmAdmin';
 import { ClientsAdmin } from './ClientsAdmin';
+import { BulkImport } from './BulkImport';
 
-type AdminTab = 'products' | 'categories' | 'trm' | 'clients';
+type AdminTab = 'products' | 'categories' | 'trm' | 'clients' | 'import';
 
 const TABS: { id: AdminTab; label: string; icon: typeof Package }[] = [
   { id: 'products', label: 'Productos y Add-ons', icon: Package },
   { id: 'categories', label: 'Categorías y Subcategorías', icon: FolderTree },
   { id: 'trm', label: 'TRM', icon: TrendingUp },
   { id: 'clients', label: 'Clientes', icon: Building2 },
+  { id: 'import', label: 'Carga masiva', icon: Upload },
 ];
 
 interface AdminPageProps {
@@ -102,6 +104,7 @@ export function AdminPage({ onBack }: AdminPageProps) {
         {tab === 'categories' && <CategoriesAdmin notify={notify} />}
         {tab === 'trm' && <TrmAdmin notify={notify} />}
         {tab === 'clients' && <ClientsAdmin notify={notify} />}
+        {tab === 'import' && <BulkImport notify={notify} />}
       </div>
 
       <AppFooter />

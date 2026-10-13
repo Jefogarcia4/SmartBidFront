@@ -448,6 +448,18 @@ button.user-chip.open {
   transition: all 0.14s ease;
 }
 
+/* El ítem puede ser <button> o <a> (el que sale del sitio): se ven igual. */
+.profile-menu-item {
+  text-decoration: none;
+}
+
+/* Flechita de "se abre afuera", pegada al borde derecho. */
+.profile-menu-externo {
+  margin-left: auto;
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
 .profile-menu-item:hover {
   background: var(--purple-100);
   color: var(--purple-600);

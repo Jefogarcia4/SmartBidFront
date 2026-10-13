@@ -10,11 +10,21 @@ import {
   Settings,
   FileText,
   Plug,
+  Calculator,
+  ExternalLink,
   ChevronDown,
 } from 'lucide-react';
 import type { CategoryDto } from '../types/api';
 import { useAuth } from '../context/AuthContext';
 import { Brand } from './Brand';
+
+/**
+ * Cotizador de Wasabi: aplicación aparte, fuera de SmartBid. Configurable por si cambia de
+ * host, igual que la URL del chat de FlexGPT.
+ */
+const WASABI_URL =
+  import.meta.env.VITE_WASABI_URL ??
+  'https://wappcotiwasabigcssprd-f4a7h4h5bgeaama7.eastus2-01.azurewebsites.net/';
 
 const ICONS: Record<string, typeof Server> = {
   server: Server,
@@ -189,6 +199,20 @@ export function TopBar({
                   <FileText size={16} /> Mis Cotizaciones
                 </button>
               )}
+              {/* Va como <a> y no como botón: así el clic con el medio o con Ctrl abre la
+                  pestaña igual, y no depende de que el navegador permita window.open. */}
+              <a
+                className="profile-menu-item"
+                role="menuitem"
+                href={WASABI_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setProfileOpen(false)}
+              >
+                <Calculator size={16} /> Cotizador Wasabi
+                <ExternalLink size={13} className="profile-menu-externo" />
+              </a>
+
               {onOpenIntegrations && (
                 <button
                   className="profile-menu-item"

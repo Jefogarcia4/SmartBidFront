@@ -453,6 +453,15 @@ button.user-chip.open {
   text-decoration: none;
 }
 
+/* Un ícono que es imagen y no SVG ocupa la misma caja de 16 px que los de lucide, para que
+   la columna de íconos del menú quede alineada. */
+.profile-menu-icono {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 /* Flechita de "se abre afuera", pegada al borde derecho. */
 .profile-menu-externo {
   margin-left: auto;

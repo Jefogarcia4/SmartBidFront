@@ -10,7 +10,6 @@ import {
   Settings,
   FileText,
   Plug,
-  Calculator,
   ExternalLink,
   ChevronDown,
 } from 'lucide-react';
@@ -209,7 +208,10 @@ export function TopBar({
                 rel="noopener noreferrer"
                 onClick={() => setProfileOpen(false)}
               >
-                <Calculator size={16} /> Cotizador Wasabi
+                {/* El símbolo de Wasabi en vez de un ícono genérico. alt vacío a
+                    propósito: es decorativo, el texto de al lado ya lo nombra. */}
+                <img className="profile-menu-icono" src="/wasabi_symbol.png" alt="" />{' '}
+                Cotizador Wasabi
                 <ExternalLink size={13} className="profile-menu-externo" />
               </a>
 

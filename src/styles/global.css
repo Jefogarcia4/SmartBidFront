@@ -2106,3 +2106,177 @@ button.user-chip.open {
 .spin {
   animation: spin 0.9s linear infinite;
 }
+
+/* ============ Combo de búsqueda (selector de cliente) ============
+   Reemplaza al <select> nativo cuando la lista es larga: el disparador se ve igual que un
+   input del formulario para no romper la línea visual de los modales. */
+.combo {
+  position: relative;
+}
+
+.combo-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.combo-trigger:hover:not(:disabled) {
+  border-color: var(--purple-200);
+}
+
+.combo-trigger.open,
+.combo-trigger:focus-visible {
+  border-color: var(--purple-400);
+  box-shadow: 0 0 0 3px rgba(170, 120, 245, 0.2);
+  outline: none;
+}
+
+.combo-trigger:disabled {
+  cursor: default;
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.combo-valor,
+.combo-option-nombre {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.combo-placeholder {
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.combo-caret {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.combo-trigger.open .combo-caret {
+  transform: rotate(180deg);
+}
+
+/* El NIT acompaña al nombre sin competir con él. */
+.combo-nit {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: var(--purple-100);
+  color: var(--purple-800);
+}
+
+.combo-nit.pendiente {
+  background: #fdf6e7;
+  color: #8a6116;
+}
+
+.combo-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 60;
+  overflow: hidden;
+  animation: menu-in 0.14s ease;
+}
+
+.combo-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.combo-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  background: transparent;
+  color: var(--text);
+}
+
+.combo-clear {
+  display: inline-flex;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.combo-clear:hover {
+  color: var(--text);
+  background: var(--bg);
+}
+
+.combo-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 288px;
+  overflow-y: auto;
+}
+
+.combo-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+/* Una sola clase para teclado y mouse: el hover mueve el resaltado en lugar de sumar otro. */
+.combo-option.active {
+  background: var(--purple-100);
+}
+
+.combo-option[aria-selected='true'] .combo-option-nombre {
+  font-weight: 700;
+}
+
+.combo-option-check {
+  flex-shrink: 0;
+  color: var(--purple-600);
+}
+
+.combo-empty,
+.combo-foot {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.combo-foot {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}

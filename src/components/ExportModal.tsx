@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
 import { clientsApi, quotationsApi } from '../api/services';
-import { etiquetaCliente } from '../utils/clientes';
+import { ClientPicker } from './ClientPicker';
 import type { ClientDto, QuotationDto } from '../types/api';
 import { useCart } from '../context/CartContext';
 import { money } from '../utils/format';
@@ -106,18 +106,13 @@ export function ExportModal({ onClose, onSuccess }: ExportModalProps) {
               {error && <div className="form-error">{error}</div>}
               <div className="field">
                 <label>CLIENTE</label>
-                <select
+                <ClientPicker
+                  clients={clients}
                   value={clientId}
-                  onChange={(e) => setClientId(e.target.value === '' ? '' : Number(e.target.value))}
-                  disabled={loading}
-                >
-                  <option value="">{loading ? 'Cargando clientes…' : 'Selecciona un cliente'}</option>
-                  {clients.map((c) => (
-                    <option key={c.clientId} value={c.clientId}>
-                      {etiquetaCliente(c.businessName, c.taxId)}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setClientId}
+                  loading={loading}
+                  disabled={saving}
+                />
               </div>
               <div className="field">
                 <label>NOTAS (OPCIONAL)</label>

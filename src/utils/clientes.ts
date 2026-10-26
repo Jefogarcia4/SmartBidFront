@@ -12,7 +12,3 @@
 export const SIN_NIT = 'SIN-NIT-';
 
 export const sinNit = (taxId: string) => taxId.startsWith(SIN_NIT);
-
-/** Cómo se nombra un cliente en una lista: razón social y NIT, o "sin NIT" si falta. */
-export const etiquetaCliente = (businessName: string, taxId: string) =>
-  `${businessName} — ${sinNit(taxId) ? 'sin NIT' : taxId}`;

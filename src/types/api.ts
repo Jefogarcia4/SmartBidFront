@@ -261,6 +261,8 @@ export interface CreateClientDto {
 }
 
 export interface UpdateClientDto {
+  /** Editable: así se completan los clientes que el CRM dejó con marcador SIN-NIT. */
+  taxId: string;
   businessName: string;
   sector: string | null;
   city: string | null;

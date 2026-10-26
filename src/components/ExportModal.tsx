@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
 import { clientsApi, quotationsApi } from '../api/services';
+import { etiquetaCliente } from '../utils/clientes';
 import type { ClientDto, QuotationDto } from '../types/api';
 import { useCart } from '../context/CartContext';
 import { money } from '../utils/format';
@@ -113,7 +114,7 @@ export function ExportModal({ onClose, onSuccess }: ExportModalProps) {
                   <option value="">{loading ? 'Cargando clientes…' : 'Selecciona un cliente'}</option>
                   {clients.map((c) => (
                     <option key={c.clientId} value={c.clientId}>
-                      {c.businessName} — {c.taxId}
+                      {etiquetaCliente(c.businessName, c.taxId)}
                     </option>
                   ))}
                 </select>

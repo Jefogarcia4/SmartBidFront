@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Plus, Pencil, Users, X } from 'lucide-react';
 import { clientsApi } from '../../api/services';
 import type { ClientDto } from '../../types/api';
 import { Pagination, usePagination } from '../../components/Pagination';
+import { sinNit } from '../../utils/clientes';
 
 interface Props {
   notify: (text: string, error?: boolean) => void;
@@ -35,7 +36,14 @@ export function ClientsAdmin({ notify }: Props) {
   const [saving, setSaving] = useState(false);
   const [contactsFor, setContactsFor] = useState<ClientDto | null>(null);
   const [contactForm, setContactForm] = useState<ContactForm>(EMPTY_CONTACT);
-  const pager = usePagination(clients, 10);
+  const [soloSinNit, setSoloSinNit] = useState(false);
+
+  const pendientes = useMemo(() => clients.filter((c) => sinNit(c.taxId)).length, [clients]);
+  const visibles = useMemo(
+    () => (soloSinNit ? clients.filter((c) => sinNit(c.taxId)) : clients),
+    [clients, soloSinNit],
+  );
+  const pager = usePagination(visibles, 10);
 
   async function load() {
     setLoading(true);
@@ -67,6 +75,7 @@ export function ClientsAdmin({ notify }: Props) {
         });
       } else {
         await clientsApi.update(form.id, {
+          taxId: form.taxId,
           businessName: form.businessName,
           sector: form.sector || null,
           city: form.city || null,
@@ -120,6 +129,16 @@ export function ClientsAdmin({ notify }: Props) {
         <button className="icon-btn" title="Buscar" onClick={() => void load()}>
           🔍
         </button>
+        {pendientes > 0 && (
+          <label className="checkbox-field" style={{ margin: 0, whiteSpace: 'nowrap' }}>
+            <input
+              type="checkbox"
+              checked={soloSinNit}
+              onChange={(e) => setSoloSinNit(e.target.checked)}
+            />
+            Solo sin NIT ({pendientes})
+          </label>
+        )}
         <div className="toolbar-spacer" />
         <button
           className="btn-add"
@@ -150,7 +169,15 @@ export function ClientsAdmin({ notify }: Props) {
             <tbody>
               {pager.pageItems.map((c) => (
                 <tr key={c.clientId}>
-                  <td className="cell-id">{c.taxId}</td>
+                  <td className="cell-id">
+                    {sinNit(c.taxId) ? (
+                      <span className="status-pill warn" title="El CRM no trajo el NIT — completalo acá">
+                        Sin NIT
+                      </span>
+                    ) : (
+                      c.taxId
+                    )}
+                  </td>
                   <td style={{ fontWeight: 600 }}>{c.businessName}</td>
                   <td className="muted">{c.sector ?? '—'}</td>
                   <td className="muted">{c.city ?? '—'}</td>
@@ -168,7 +195,9 @@ export function ClientsAdmin({ notify }: Props) {
                         onClick={() =>
                           setForm({
                             id: c.clientId,
-                            taxId: c.taxId,
+                            // El marcador es un hash, no un NIT: se muestra vacío para que
+                            // escriban el real en lugar de editar letras sin sentido.
+                            taxId: sinNit(c.taxId) ? '' : c.taxId,
                             businessName: c.businessName,
                             sector: c.sector ?? '',
                             city: c.city ?? '',
@@ -208,7 +237,8 @@ export function ClientsAdmin({ notify }: Props) {
                     <label>NIT</label>
                     <input
                       required
-                      disabled={form.id != null}
+                      maxLength={30}
+                      placeholder="900123456-7"
                       value={form.taxId}
                       onChange={(e) => setForm({ ...form, taxId: e.target.value })}
                     />

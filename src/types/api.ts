@@ -397,3 +397,61 @@ export interface CatalogImportResult {
   roleHours: number;
   totalCOP: number;
 }
+
+/** Cómo se muestra un valor: precio en pesos, número, texto corto o texto largo con "ver". */
+export type CatalogFieldKind = 'text' | 'longtext' | 'money' | 'number';
+
+/** Un campo que difiere entre la base y el archivo. Null = vacío. */
+export interface CatalogFieldChange {
+  field: string;
+  kind: CatalogFieldKind;
+  before: string | null;
+  after: string | null;
+}
+
+export interface CatalogCompareRow {
+  code: string;
+  name: string;
+  category: string;
+  subcategory: string;
+  priceCOP: number;
+  isAddOn: boolean;
+  /** Ya está en alguna cotización. */
+  quoted: boolean;
+  changes: CatalogFieldChange[];
+  /** Algo a saber antes de marcarlo; no impide aplicarlo. */
+  warning: string | null;
+  /** Por qué no se puede aplicar: la casilla va deshabilitada. */
+  blocked: string | null;
+}
+
+export interface CatalogCompareResult {
+  fileName: string;
+  sheet: string;
+  availableSheets: string[];
+  rows: number;
+  unchanged: number;
+  comparedFields: string[];
+  changed: CatalogCompareRow[];
+  // Entre comillas: sin ellas `new` se lee como firma de constructor.
+  'new': CatalogCompareRow[];
+  missing: CatalogCompareRow[];
+  ambiguities: CatalogImportAmbiguity[];
+  issues: CatalogImportIssue[];
+  canApply: boolean;
+}
+
+export interface CatalogCompareSelection {
+  /** Códigos de modificados y nuevos a escribir. */
+  apply: string[];
+  /** Códigos de los que no vienen en el archivo y se desactivan. */
+  deactivate: string[];
+}
+
+export interface CatalogCompareApplyResult {
+  updated: number;
+  inserted: number;
+  deactivated: number;
+  addOnLinks: number;
+  ignored: number;
+}

@@ -2280,3 +2280,251 @@ button.user-chip.open {
   border-top: 1px solid var(--border);
   background: var(--bg);
 }
+
+/* ============ Carga masiva: exportar y comparar ============ */
+.import-intro {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cmp-campos {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+.cmp-igual {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  background: #e7f7ef;
+  color: #14934d;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.cmp-grupo {
+  margin-top: 18px;
+}
+
+.cmp-grupo-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cmp-grupo-head small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.cmp-todos {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--purple-600);
+  cursor: pointer;
+}
+
+.cmp-fila {
+  display: flex;
+  gap: 12px;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.cmp-fila.marcada {
+  background: rgba(170, 120, 245, 0.07);
+}
+
+.cmp-fila.bloqueada .cmp-titulo {
+  opacity: 0.6;
+}
+
+.cmp-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--purple-600);
+  cursor: pointer;
+}
+
+.cmp-check:disabled {
+  cursor: not-allowed;
+}
+
+.cmp-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cmp-titulo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.cmp-meta {
+  margin-top: 3px;
+  font-size: 12.5px;
+}
+
+.cmp-cambio {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.cmp-campo {
+  min-width: 112px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Antes tachado y apagado, después resaltado: se lee el sentido del cambio sin pensarlo. */
+.cmp-antes {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(224, 68, 124, 0.5);
+}
+
+.cmp-despues {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cmp-flecha {
+  align-self: center;
+  color: var(--purple-400);
+}
+
+.cmp-vacio {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.cmp-ver {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--purple-600);
+  cursor: pointer;
+}
+
+.cmp-ver:hover {
+  text-decoration: underline;
+}
+
+.cmp-diff {
+  margin: 8px 0 4px;
+  padding: 8px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 12.5px;
+  line-height: 1.55;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.cmp-linea {
+  padding: 0 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.cmp-linea.igual {
+  color: var(--text-muted);
+}
+
+.cmp-linea.quita {
+  background: rgba(224, 68, 124, 0.1);
+  color: #a52a5c;
+  text-decoration: line-through;
+  text-decoration-color: rgba(224, 68, 124, 0.45);
+}
+
+.cmp-linea.agrega {
+  background: #e7f7ef;
+  color: #0f6e3a;
+}
+
+.cmp-signo {
+  display: inline-block;
+  width: 22px;
+  text-align: center;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cmp-nota {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 7px;
+  font-size: 12.5px;
+}
+
+.cmp-nota svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cmp-nota.aviso {
+  color: #8a6400;
+}
+
+.cmp-nota.bloquea {
+  color: var(--danger);
+}
+
+/* La barra de aplicar queda pegada abajo: con 80 modificados no hay que volver a buscarla. */
+.cmp-aplicar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .cmp-grupo-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cmp-campo {
+    min-width: 0;
+    width: 100%;
+  }
+}

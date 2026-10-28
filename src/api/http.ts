@@ -38,16 +38,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   const res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
 
-  if (!res.ok) {
-    let message = `Error ${res.status}`;
-    try {
-      const body = await res.json();
-      message = body?.message ?? body?.title ?? message;
-    } catch {
-      /* respuesta sin cuerpo JSON */
-    }
-    throw new ApiError(res.status, message);
-  }
+  if (!res.ok) throw await errorDe(res);
 
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
@@ -66,17 +57,24 @@ async function requestForm<T>(path: string, form: FormData): Promise<T> {
 
   const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', body: form, headers });
 
-  if (!res.ok) {
-    let message = `Error ${res.status}`;
-    try {
-      const body = await res.json();
-      message = body?.mensaje ?? body?.message ?? body?.title ?? message;
-    } catch {
-      /* respuesta sin cuerpo JSON */
-    }
-    throw new ApiError(res.status, message);
-  }
+  if (!res.ok) throw await errorDe(res);
   return (await res.json()) as T;
+}
+
+/**
+ * Error legible a partir de la respuesta. El API usa tres formas: `detail` (ProblemDetails de
+ * las reglas de negocio, cuyo `title` es el genérico "Business Rule Violation"), `mensaje` (los
+ * controladores de carga y descarga) y `message`. `detail` va primero: es el que dice qué pasó.
+ */
+async function errorDe(res: Response): Promise<ApiError> {
+  let message = `Error ${res.status}`;
+  try {
+    const body = await res.json();
+    message = body?.detail ?? body?.mensaje ?? body?.message ?? body?.title ?? message;
+  } catch {
+    /* respuesta sin cuerpo JSON */
+  }
+  return new ApiError(res.status, message);
 }
 
 /** Descarga binaria (ej. documentos Word) con el mismo esquema de autenticación. */

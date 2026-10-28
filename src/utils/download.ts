@@ -1,5 +1,15 @@
 import { quotationsApi } from '../api/services';
 
+/** Hace que el navegador guarde un archivo recibido del API con el nombre indicado. */
+export function guardarArchivo(blob: Blob, nombre: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nombre;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 /**
  * Descarga el Word estándar de una cotización.
  *
@@ -11,13 +21,7 @@ import { quotationsApi } from '../api/services';
  */
 export async function descargarWordEstandar(quotationId: number, numero: string): Promise<boolean> {
   try {
-    const blob = await quotationsApi.generateDocument(quotationId);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Cotizacion_${numero}.docx`;
-    a.click();
-    URL.revokeObjectURL(url);
+    guardarArchivo(await quotationsApi.generateDocument(quotationId), `Cotizacion_${numero}.docx`);
     return true;
   } catch {
     return false;

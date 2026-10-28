@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { ApiError, BASE_URL } from '../api/http';
 import { Brand } from '../components/Brand';
-import { isO365Configured } from '../auth/msal';
+import { describeMicrosoftError, isO365Configured } from '../auth/msal';
 
 export function LoginPage() {
   const { login, loginWithMicrosoft, loginDevSso } = useAuth();
@@ -31,7 +31,7 @@ export function LoginPage() {
       } else if (err instanceof ApiError) {
         setError('No se pudo validar el token con el API.');
       } else {
-        setError('Inicio de sesión con Microsoft cancelado o fallido.');
+        setError(describeMicrosoftError(err));
       }
     } finally {
       setMsLoading(false);

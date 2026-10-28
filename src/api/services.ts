@@ -33,6 +33,9 @@ import type {
   CatalogImportOptions,
   CatalogImportPreview,
   CatalogImportResult,
+  CatalogCompareApplyResult,
+  CatalogCompareResult,
+  CatalogCompareSelection,
 } from '../types/api';
 
 export const authApi = {
@@ -211,6 +214,28 @@ export const catalogImportApi = {
 
   aplicar: (archivo: File, opciones: CatalogImportOptions) =>
     http.form<CatalogImportResult>('/api/catalog/import/apply', cuerpo(archivo, opciones)),
+
+  /** Diferencias producto por producto contra la base. No escribe nada. */
+  comparar: (archivo: File, opciones: CatalogImportOptions) =>
+    http.form<CatalogCompareResult>('/api/catalog/import/compare', cuerpo(archivo, opciones)),
+
+  /** Aplica solo lo marcado. El servidor vuelve a comparar contra el archivo antes de escribir. */
+  aplicarComparacion: (
+    archivo: File,
+    opciones: CatalogImportOptions,
+    seleccion: CatalogCompareSelection,
+  ) => {
+    const fd = cuerpo(archivo, opciones);
+    fd.append('seleccion', JSON.stringify(seleccion));
+    return http.form<CatalogCompareApplyResult>('/api/catalog/import/compare/apply', fd);
+  },
+
+  /** El catálogo en Excel, en el formato que `comparar` lee de vuelta. */
+  exportar: (categoryId: number | null, incluirInactivos: boolean) => {
+    const q = new URLSearchParams({ includeInactive: String(incluirInactivos) });
+    if (categoryId != null) q.set('categoryId', String(categoryId));
+    return http.blob(`/api/catalog/export?${q.toString()}`);
+  },
 };
 
 function cuerpo(archivo: File, opciones: CatalogImportOptions): FormData {
